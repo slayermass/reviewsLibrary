@@ -62,7 +62,7 @@ type Props = {
   type?: "submit" | "button";
 };
 
-export const LoaderButton = ({
+export const UiLoaderButton = ({
   loading,
   type = "button",
   text = "Войти",

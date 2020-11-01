@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { LoginForm } from "components/Auth/LoginForm";
-import { login } from "utils/firebase";
+import { login, loginAnonymously } from "utils/firebase";
+
+let mount = false;
 
 export const LoginPage = (): React.ReactElement => {
+  useEffect(() => {
+    mount = true;
+    return () => {
+      mount = false;
+    };
+  }, []);
+
   const history = useHistory();
 
   const [loading, setLoading] = useState(false);
@@ -18,11 +27,43 @@ export const LoginPage = (): React.ReactElement => {
         history.push("/");
       })
       .catch((err) => {
-        toast.error(`Ошибка авторизации: "${err.name}"`);
+        // eslint-disable-next-line no-console
+        console.error(err.message);
+        toast.error(
+          `Ошибка авторизации: пользователь не найден или не существует`
+        );
       })
       .finally(() => {
-        setLoading(false);
+        if (mount) {
+          setLoading(false);
+        }
       });
   };
-  return <LoginForm onLogin={onLogin} loading={loading} />;
+
+  const onAnonimLogin = useCallback(() => {
+    setLoading(true);
+
+    loginAnonymously()
+      .then(() => {
+        history.push("/");
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(err.message);
+        toast.error(`Ошибка анонимной авторизации`);
+      })
+      .finally(() => {
+        if (mount) {
+          setLoading(false);
+        }
+      });
+  }, []);
+
+  return (
+    <LoginForm
+      onLogin={onLogin}
+      loading={loading}
+      onAnonimLogin={onAnonimLogin}
+    />
+  );
 };
