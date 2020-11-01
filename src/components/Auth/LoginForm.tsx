@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import styled from "styled-components";
 
-import { LoaderButton } from "components/UI/LoaderButton";
+import { UiLoaderButton } from "components/UI/LoaderButton";
 
 const Container = styled.div`
   display: flex;
@@ -66,12 +66,17 @@ const Input = styled.input`
 
 type Props = {
   onLogin: (email: string, password: string) => void;
+  onAnonimLogin: () => void;
   loading: boolean;
 };
 
-export const LoginForm = ({ onLogin, loading }: Props): React.ReactElement => {
-  const [email, setEmail] = useState("slayermass@mail.ru");
-  const [password, setPassword] = useState("musickattler");
+export const LoginForm = ({
+  onLogin,
+  onAnonimLogin,
+  loading,
+}: Props): React.ReactElement => {
+  const [email, setEmail] = useState("y@Y.ru");
+  const [password, setPassword] = useState("asd4");
 
   const onChange = useCallback(
     ({ target: { type, value } }: ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +102,7 @@ export const LoginForm = ({ onLogin, loading }: Props): React.ReactElement => {
         <Input
           type="email"
           maxLength={50}
+          minLength={4}
           placeholder="Email"
           required
           value={email}
@@ -105,12 +111,16 @@ export const LoginForm = ({ onLogin, loading }: Props): React.ReactElement => {
         <Input
           type="password"
           maxLength={50}
+          minLength={4}
           placeholder="Пароль"
           required
           value={password}
           onChange={onChange}
         />
-        <LoaderButton type="submit" loading={loading} />
+        <button type="button" onClick={onAnonimLogin}>
+          Анонимная авторизация
+        </button>
+        <UiLoaderButton type="submit" loading={loading} />
       </Form>
     </Container>
   );

@@ -1,11 +1,11 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Normalize } from "styled-normalize";
+import { BrowserRouter as Router } from "react-router-dom";
 
-import { LoginPage } from "containers/Auth/Login";
+import { CheckRoute } from "components/Auth/CheckRoute";
 
 import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Normalize } from "styled-normalize";
 
 export const App = (): React.ReactElement => (
   <>
@@ -17,11 +17,7 @@ export const App = (): React.ReactElement => (
     />
     <Router>
       <Normalize />
-      <Switch>
-        <Route path="/login">
-          <LoginPage />
-        </Route>
-      </Switch>
+      <CheckRoute />
     </Router>
   </>
 );
