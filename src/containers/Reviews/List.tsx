@@ -1,8 +1,8 @@
-import { defaultSizePageTable } from "config";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import { getReviewsList } from "utils/firebase";
+import { defaultSizePageTable } from "config";
 import { UiGlobalLoader } from "components/UI/GlobalLoader";
 import { IReviewListModel } from "models/Review/interfaces";
 import { ReviewsListComponent } from "components/Reviews/ReviewsList";

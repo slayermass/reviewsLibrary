@@ -83,7 +83,7 @@ const TableFoot = styled.tfoot`
 const TableTH = styled(TableTD)`
   color: rgba(0, 0, 0, 0.54);
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 400;
 `;
 
 type Props = {
@@ -123,7 +123,9 @@ export const ReviewsListComponent = ({
               <TableTD>{item.album}</TableTD>
               <TableTD>{item.rating}</TableTD>
               <TableTD>{item.comment}</TableTD>
-              <TableTD>{CDate.format(item.date, "d MMMM yyyy HH:mm'")}</TableTD>
+              <TableTD>
+                {CDate.format(item.date, "d MMMM yyyy, HH:mm:ss'")}
+              </TableTD>
             </TableTR>
           ))}
         </tbody>
