@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import { getReviewsList } from "utils/firebase";
+import { subscribeReviews } from "utils/firebase";
 import { defaultSizePageTable } from "config";
-import { UiGlobalLoader } from "components/UI/GlobalLoader";
 import { IReviewListModel } from "models/Review/interfaces";
 import { ReviewsListComponent } from "components/Reviews/ReviewsList";
-import { UiEntityNotFound } from "components/UI/EntityNotFound";
+import { ReviewItemModel } from "models/Review";
 
 export type ReviewsListFilter = {
   perPage: number;
@@ -35,31 +34,41 @@ export const ReviewsList = (): React.ReactElement => {
   };
 
   useEffect(() => {
-    getReviewsList()
-      .then(setModel)
-      .catch((err) => {
+    subscribeReviews().onSnapshot(
+      /** type? */
+      (response: any) => {
+        setLoading(true);
+
+        const resModel = response.docs.map(
+          (i: any) => new ReviewItemModel({ id: i.id, ...i.data() })
+        );
+        setModel(resModel);
+
+        setLoading(false);
+      },
+      (err: Error) => {
+        setLoading(false);
         toast.error(`Ошибка получения списка обзоров: "${err.name}"`);
-      })
-      .finally(() => setLoading(false));
+      }
+    );
   }, []);
 
-  if (loading) {
-    return <UiGlobalLoader />;
-  }
-  if (model) {
-    return (
-      <ReviewsListComponent
-        model={model.slice(
-          (filter.page - 1) * filter.perPage,
-          filter.page * filter.perPage
-        )}
-        onSizePageChange={onSizePageChange}
-        onPageChange={onPageChange}
-        page={filter.page}
-        perPage={filter.perPage}
-        totalAmount={model.length}
-      />
-    );
-  }
-  return <UiEntityNotFound text="Обзоров не найдено" />;
+  return (
+    <ReviewsListComponent
+      model={
+        model
+          ? model.slice(
+              (filter.page - 1) * filter.perPage,
+              filter.page * filter.perPage
+            )
+          : []
+      }
+      onSizePageChange={onSizePageChange}
+      onPageChange={onPageChange}
+      page={filter.page}
+      perPage={filter.perPage}
+      totalAmount={model ? model.length : 0}
+      loading={loading}
+    />
+  );
 };

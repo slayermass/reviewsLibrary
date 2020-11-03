@@ -1,3 +1,4 @@
+import { UiLoader } from "components/UI/Loaders";
 import React from "react";
 import styled from "styled-components";
 
@@ -86,6 +87,13 @@ const TableTH = styled(TableTD)`
   font-weight: 400;
 `;
 
+const TableLoader = styled.div`
+  height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 type Props = {
   model: IReviewListModel;
   onSizePageChange: (p: number) => void;
@@ -93,6 +101,7 @@ type Props = {
   page: number;
   perPage: number;
   totalAmount: number;
+  loading: boolean;
 };
 
 export const ReviewsListComponent = ({
@@ -102,6 +111,7 @@ export const ReviewsListComponent = ({
   page,
   perPage,
   totalAmount,
+  loading,
 }: Props): React.ReactElement => (
   <>
     <Header>Музыкальные обзоры</Header>
@@ -116,32 +126,47 @@ export const ReviewsListComponent = ({
             <TableTH>Дата</TableTH>
           </TableTR>
         </TableHead>
-        <tbody>
-          {model.map((item: IReviewItemModel) => (
-            <TableTR key={item.id}>
-              <TableTD>{item.group}</TableTD>
-              <TableTD>{item.album}</TableTD>
-              <TableTD>{item.rating}</TableTD>
-              <TableTD>{item.comment}</TableTD>
-              <TableTD>
-                {CDate.format(item.date, "d MMMM yyyy, HH:mm:ss'")}
-              </TableTD>
-            </TableTR>
-          ))}
-        </tbody>
-        <TableFoot>
-          <TableTR>
-            <TableTD colSpan={10}>
-              <UiPagination
-                total={totalAmount}
-                onPageChange={onPageChange}
-                onSizePageChange={onSizePageChange}
-                page={page}
-                perPage={perPage}
-              />
-            </TableTD>
-          </TableTR>
-        </TableFoot>
+        {loading && (
+          <tbody>
+            <tr>
+              <td colSpan={10}>
+                <TableLoader>
+                  <UiLoader color="#3f51b5" />
+                </TableLoader>
+              </td>
+            </tr>
+          </tbody>
+        )}
+        {!loading && (
+          <>
+            <tbody>
+              {model.map((item: IReviewItemModel) => (
+                <TableTR key={item.id}>
+                  <TableTD>{item.group}</TableTD>
+                  <TableTD>{item.album}</TableTD>
+                  <TableTD>{item.rating}</TableTD>
+                  <TableTD>{item.comment}</TableTD>
+                  <TableTD>
+                    {CDate.format(item.date, "d MMMM yyyy, HH:mm:ss'")}
+                  </TableTD>
+                </TableTR>
+              ))}
+            </tbody>
+            <TableFoot>
+              <TableTR>
+                <TableTD colSpan={10}>
+                  <UiPagination
+                    total={totalAmount}
+                    onPageChange={onPageChange}
+                    onSizePageChange={onSizePageChange}
+                    page={page}
+                    perPage={perPage}
+                  />
+                </TableTD>
+              </TableTR>
+            </TableFoot>
+          </>
+        )}
       </Table>
     </Wrapper>
   </>

@@ -4,18 +4,19 @@ import { Route, Switch, useHistory } from "react-router-dom";
 
 import { LoginPage } from "containers/Auth/Login";
 import { ReviewsList } from "containers/Reviews/List";
-import { UiGlobalLoader } from "components/UI/GlobalLoader";
+import { UiGlobalLoader } from "components/UI/Loaders";
 
 export const CheckRoute = (): React.ReactElement => {
   const history = useHistory();
   const [loadUser, setLoadUser] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
 
   /** проверить авторизованность пользователя */
   useEffect(() => {
     app.auth().onAuthStateChanged((user) => {
-      console.log("onAuthStateChanged");
       if (user) {
         console.log("user.isAnonymous", user.isAnonymous);
+        setIsAuth(true);
       }
 
       setLoadUser(false);
@@ -31,9 +32,12 @@ export const CheckRoute = (): React.ReactElement => {
   }
   return (
     <Switch>
-      <Route path="/" exact>
-        <ReviewsList />
-      </Route>
+      {isAuth && (
+        <Route path="/" exact>
+          <ReviewsList />
+        </Route>
+      )}
+
       <Route path="/login">
         <LoginPage />
       </Route>

@@ -88,7 +88,7 @@ export const UiPagination = memo(
     perPage,
   }: Props): React.ReactElement => {
     const lastPage = Math.ceil(total / perPage);
-    const currentMin = page === 1 ? 1 : perPage * (page - 1);
+    const currentMin = page === 1 ? 1 : perPage * (page - 1) + 1;
     let currentMax = perPage * page;
     currentMax = currentMax > total ? total : currentMax;
 
