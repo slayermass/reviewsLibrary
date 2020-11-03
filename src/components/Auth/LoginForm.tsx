@@ -107,6 +107,7 @@ export const LoginForm = ({
           required
           value={email}
           onChange={onChange}
+          inputMode="email"
         />
         <Input
           type="password"

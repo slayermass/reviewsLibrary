@@ -1,3 +1,4 @@
+import { SvgStarBlock } from "assets/svg/star";
 import { UiLoader } from "components/UI/Loaders";
 import React from "react";
 import styled from "styled-components";
@@ -13,6 +14,13 @@ const Wrapper = styled.div`
   background-color: #fff;
   border-radius: 4px;
   margin: 64px 36px;
+
+  @media (max-width: 900px) {
+    & {
+      padding: 4px 10px;
+      margin: 64px 4px;
+    }
+  }
 `;
 
 const Header = styled.h1`
@@ -29,11 +37,30 @@ const Header = styled.h1`
   align-items: center;
   padding: 0 36px;
   margin-top: -4px;
+
+  @media (max-width: 400px) {
+    & {
+      font-size: 28px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    & {
+      text-align: center;
+    }
+  }
 `;
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+
+  @media (max-width: 900px) {
+    & {
+      display: block;
+      overflow: auto;
+    }
+  }
 `;
 
 const TableTR = styled.tr`
@@ -65,6 +92,17 @@ const TableTD = styled.td`
   color: rgba(0, 0, 0, 0.87);
   font-size: 0.8125rem;
   font-weight: 400;
+
+  @media (max-width: 1100px) {
+    & {
+      padding: 4px 28px 4px 12px;
+    }
+  }
+  @media (max-width: 900px) {
+    & {
+      padding: 4px;
+    }
+  }
 `;
 
 const TableFoot = styled.tfoot`
@@ -144,7 +182,9 @@ export const ReviewsListComponent = ({
                 <TableTR key={item.id}>
                   <TableTD>{item.group}</TableTD>
                   <TableTD>{item.album}</TableTD>
-                  <TableTD>{item.rating}</TableTD>
+                  <TableTD>
+                    <SvgStarBlock rating={item.rating} />
+                  </TableTD>
                   <TableTD>{item.comment}</TableTD>
                   <TableTD>
                     {CDate.format(item.date, "d MMMM yyyy, HH:mm:ss'")}
