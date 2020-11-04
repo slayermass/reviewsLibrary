@@ -1,25 +1,70 @@
-import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import React, { useEffect, useMemo, useState } from "react";
 
-import { subscribeReviews } from "utils/firebase";
-import { defaultSizePageTable } from "config";
-import { IReviewListModel } from "models/Review/interfaces";
 import { ReviewsListComponent } from "components/Reviews/ReviewsList";
+import { defaultSizePageTable } from "config";
 import { ReviewItemModel } from "models/Review";
+import { IReviewListModel } from "models/Review/interfaces";
+import { subscribeReviews } from "utils/firebase";
 
 export type ReviewsListFilter = {
   perPage: number;
   page: number;
+  group: string;
+  album: string;
 };
+
+export type OnFilterSearchType = (
+  name: "group" | "album"
+) => (value: string) => void;
 
 export const ReviewsList = (): React.ReactElement => {
   const [model, setModel] = useState<IReviewListModel | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [modelToRender, setModalToRender] = useState<{
+    data: IReviewListModel;
+    amount: number;
+  }>({ data: [], amount: 0 });
+
   const [filter, setFilter] = useState<ReviewsListFilter>({
     perPage: defaultSizePageTable,
     page: 1,
+    group: "",
+    album: "",
   });
+
+  /** сложно получилось. надо проще */
+  useMemo(() => {
+    /** применение всех фильтров */
+    let filteredModel: IReviewListModel = [];
+    const modelToFilter = model || [];
+
+    let total = modelToFilter.length;
+    let searched = false;
+
+    /** фильтровать по всем записям */
+    if (filter.album.length || filter.group.length) {
+      filteredModel = modelToFilter
+        .filter((item) =>
+          item.group.toLowerCase().includes(filter.group.toLowerCase())
+        )
+        .filter((item) =>
+          item.album.toLowerCase().includes(filter.album.toLowerCase())
+        );
+
+      total = filteredModel.length;
+      searched = true;
+    }
+
+    /** обрезать по вывод страницы */
+    filteredModel = (searched ? filteredModel : modelToFilter).slice(
+      (filter.page - 1) * filter.perPage,
+      filter.page * filter.perPage
+    );
+
+    setModalToRender({ data: filteredModel, amount: total });
+  }, [filter, model]);
 
   useEffect(() => {
     console.log("filter changed", filter);
@@ -29,8 +74,10 @@ export const ReviewsList = (): React.ReactElement => {
     setFilter({ ...filter, perPage });
   };
 
-  const onPageChange = (page: number) => {
-    setFilter({ ...filter, page });
+  const onPageChange = (page: number) => setFilter({ ...filter, page });
+
+  const onFilterSearch = (name: "group" | "album") => (value: string) => {
+    setFilter({ ...filter, [name]: value });
   };
 
   useEffect(() => {
@@ -55,19 +102,13 @@ export const ReviewsList = (): React.ReactElement => {
 
   return (
     <ReviewsListComponent
-      model={
-        model
-          ? model.slice(
-              (filter.page - 1) * filter.perPage,
-              filter.page * filter.perPage
-            )
-          : []
-      }
+      model={modelToRender.data}
       onSizePageChange={onSizePageChange}
       onPageChange={onPageChange}
+      onFilterSearch={onFilterSearch}
       page={filter.page}
       perPage={filter.perPage}
-      totalAmount={model ? model.length : 0}
+      totalAmount={modelToRender.amount}
       loading={loading}
     />
   );

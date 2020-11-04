@@ -1,11 +1,13 @@
-import { SvgStarBlock } from "assets/svg/star";
-import { UiLoader } from "components/UI/Loaders";
+import { OnFilterSearchType } from "containers/Reviews/List";
 import React from "react";
 import styled from "styled-components";
 
 import { UiPagination } from "components/UI/Pagination";
 import { IReviewItemModel, IReviewListModel } from "models/Review/interfaces";
 import { CDate } from "utils/CDate";
+import { SvgStarBlock } from "assets/svg/star";
+import { ReviewsFilter } from "components/Reviews/ReviewsFilter";
+import { UiLoader } from "components/UI/Loaders";
 
 const Wrapper = styled.div`
   padding: 20px;
@@ -86,7 +88,7 @@ const TableHead = styled.thead`
 
 const TableTD = styled.td`
   border-bottom: 1px solid rgba(224, 224, 224, 1);
-  padding: 4px 56px 4px 24px;
+  padding: 4px 56px 4px 0;
   text-align: left;
   vertical-align: inherit;
   color: rgba(0, 0, 0, 0.87);
@@ -140,6 +142,7 @@ type Props = {
   perPage: number;
   totalAmount: number;
   loading: boolean;
+  onFilterSearch: OnFilterSearchType;
 };
 
 export const ReviewsListComponent = ({
@@ -150,10 +153,12 @@ export const ReviewsListComponent = ({
   perPage,
   totalAmount,
   loading,
+  onFilterSearch,
 }: Props): React.ReactElement => (
   <>
     <Header>Музыкальные обзоры</Header>
     <Wrapper>
+      <ReviewsFilter onFilterSearch={onFilterSearch} />
       <Table>
         <TableHead>
           <TableTR>

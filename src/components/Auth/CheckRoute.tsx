@@ -15,7 +15,6 @@ export const CheckRoute = (): React.ReactElement => {
   useEffect(() => {
     app.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log("user.isAnonymous", user.isAnonymous);
         setIsAuth(true);
       }
 

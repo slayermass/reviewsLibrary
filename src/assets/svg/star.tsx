@@ -4,7 +4,6 @@ import styled from "styled-components";
 export const SvgStar = memo(
   (): React.ReactElement => (
     <svg
-      className="jss237 reviews_rating reviews_rating-2"
       focusable="false"
       viewBox="0 0 24 24"
       aria-hidden="true"
