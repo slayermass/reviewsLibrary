@@ -2,6 +2,8 @@ import app from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import invariant from "invariant";
+import { ReviewItemModel } from "models/Review";
+import { IReviewItemModel } from "models/Review/interfaces";
 
 const {
   REACT_APP_FIREBASE_API_KEY,
@@ -29,14 +31,14 @@ const dbStore = app.firestore();
 export const auth = app.auth();
 
 /** авторизация. логин */
-export const login = (email: string, password: string): Promise<any> =>
+export const login = (email: string, password: string): Promise<unknown> =>
   auth.signInWithEmailAndPassword(email, password);
 
 /** авторизация. анонимный логин */
 export const loginAnonymously = (): Promise<any> => auth.signInAnonymously();
 
 /** обзоры. список. обычная загрузка */
-// export const getReviewsList = (): Promise<IReviewListModel> =>
+// export const getReviewsList = (): Promise<IReviewModel> =>
 //   dbStore
 //     .collection("reviews")
 //     .orderBy("date", "desc")
@@ -48,3 +50,14 @@ export const loginAnonymously = (): Promise<any> => auth.signInAnonymously();
 /** обзоры. список. подписка */
 export const subscribeReviews = (): any =>
   dbStore.collection("reviews").orderBy("date", "desc");
+
+/** обзоры. данные одного обзора */
+export const getReviewById = (id: string): Promise<IReviewItemModel | null> =>
+  dbStore
+    .collection("reviews")
+    .doc(id)
+    .get()
+    .then((response) =>
+      response.data() ? new ReviewItemModel(response.data()) : null
+    )
+    .catch((err) => err);

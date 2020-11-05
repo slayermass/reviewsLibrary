@@ -4,7 +4,7 @@ export interface IReviewItemModel {
   readonly date: Date;
   readonly group: string;
   readonly id: string;
-  readonly rating: number; // 1-5
+  readonly rating: number; // 1-10
 }
 
-export type IReviewListModel = IReviewItemModel[];
+export type IReviewModel = IReviewItemModel[];

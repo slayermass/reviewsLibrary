@@ -1,10 +1,11 @@
+import { GlobalContext } from "components/Auth/CheckRoute";
 import { toast } from "react-toastify";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 
-import { ReviewsListComponent } from "components/Reviews/ReviewsList";
+import { ReviewsListComponent } from "components/Reviews/List";
 import { defaultSizePageTable } from "config";
 import { ReviewItemModel } from "models/Review";
-import { IReviewListModel } from "models/Review/interfaces";
+import { IReviewModel } from "models/Review/interfaces";
 import { subscribeReviews } from "utils/firebase";
 
 export type ReviewsListFilter = {
@@ -19,11 +20,11 @@ export type OnFilterSearchType = (
 ) => (value: string) => void;
 
 export const ReviewsList = (): React.ReactElement => {
-  const [model, setModel] = useState<IReviewListModel | null>(null);
+  const [model, setModel] = useState<IReviewModel | null>(null);
   const [loading, setLoading] = useState(true);
 
   const [modelToRender, setModalToRender] = useState<{
-    data: IReviewListModel;
+    data: IReviewModel;
     amount: number;
   }>({ data: [], amount: 0 });
 
@@ -37,7 +38,7 @@ export const ReviewsList = (): React.ReactElement => {
   /** сложно получилось. надо проще */
   useMemo(() => {
     /** применение всех фильтров */
-    let filteredModel: IReviewListModel = [];
+    let filteredModel: IReviewModel = [];
     const modelToFilter = model || [];
 
     let total = modelToFilter.length;
@@ -76,7 +77,7 @@ export const ReviewsList = (): React.ReactElement => {
 
   const onPageChange = (page: number) => setFilter({ ...filter, page });
 
-  const onFilterSearch = (name: "group" | "album") => (value: string) => {
+  const onFilterSearch: OnFilterSearchType = (name) => (value) => {
     setFilter({ ...filter, [name]: value });
   };
 
@@ -100,6 +101,8 @@ export const ReviewsList = (): React.ReactElement => {
     );
   }, []);
 
+  const GlobalContextValue = useContext(GlobalContext);
+
   return (
     <ReviewsListComponent
       model={modelToRender.data}
@@ -110,6 +113,7 @@ export const ReviewsList = (): React.ReactElement => {
       perPage={filter.perPage}
       totalAmount={modelToRender.amount}
       loading={loading}
+      isExistUser={!GlobalContextValue.isAnonymousUser}
     />
   );
 };

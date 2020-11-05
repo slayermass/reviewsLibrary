@@ -1,13 +1,15 @@
-import { OnFilterSearchType } from "containers/Reviews/List";
+import { reviewFormPath } from "components/Auth/CheckRoute";
 import React from "react";
 import styled from "styled-components";
 
 import { UiPagination } from "components/UI/Pagination";
-import { IReviewItemModel, IReviewListModel } from "models/Review/interfaces";
+import { IReviewItemModel, IReviewModel } from "models/Review/interfaces";
 import { CDate } from "utils/CDate";
-import { SvgStarBlock } from "assets/svg/star";
-import { ReviewsFilter } from "components/Reviews/ReviewsFilter";
+import { ReviewsFilter } from "components/Reviews/Filter";
 import { UiLoader } from "components/UI/Loaders";
+import { SemiStar, UiStarsBlock } from "components/UI/UiStarsBlock";
+import { OnFilterSearchType } from "containers/Reviews/List";
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
   padding: 20px;
@@ -74,6 +76,10 @@ const TableTR = styled.tr`
   &:hover {
     background-color: #fafafa;
     cursor: pointer;
+
+    ${SemiStar} {
+      background-color: #fafafa;
+    }
   }
 `;
 
@@ -135,7 +141,7 @@ const TableLoader = styled.div`
 `;
 
 type Props = {
-  model: IReviewListModel;
+  model: IReviewModel;
   onSizePageChange: (p: number) => void;
   onPageChange: (p: number) => void;
   page: number;
@@ -143,6 +149,7 @@ type Props = {
   totalAmount: number;
   loading: boolean;
   onFilterSearch: OnFilterSearchType;
+  isExistUser: boolean; // реальный ли пользователь ( не аноним )
 };
 
 export const ReviewsListComponent = ({
@@ -154,65 +161,73 @@ export const ReviewsListComponent = ({
   totalAmount,
   loading,
   onFilterSearch,
-}: Props): React.ReactElement => (
-  <>
-    <Header>Музыкальные обзоры</Header>
-    <Wrapper>
-      <ReviewsFilter onFilterSearch={onFilterSearch} />
-      <Table>
-        <TableHead>
-          <TableTR>
-            <TableTH>Группа</TableTH>
-            <TableTH>Альбом</TableTH>
-            <TableTH>Рейтинг</TableTH>
-            <TableTH>Комментарий</TableTH>
-            <TableTH>Дата</TableTH>
-          </TableTR>
-        </TableHead>
-        {loading && (
-          <tbody>
-            <tr>
-              <td colSpan={10}>
-                <TableLoader>
-                  <UiLoader color="#3f51b5" />
-                </TableLoader>
-              </td>
-            </tr>
-          </tbody>
-        )}
-        {!loading && (
-          <>
+  isExistUser,
+}: Props): React.ReactElement => {
+  const history = useHistory();
+
+  const onTrClick = (id: string) => () =>
+    isExistUser && history.push(`${reviewFormPath}/${id}`);
+
+  return (
+    <>
+      <Header>Музыкальные обзоры</Header>
+      <Wrapper>
+        <ReviewsFilter onFilterSearch={onFilterSearch} />
+        <Table>
+          <TableHead>
+            <TableTR>
+              <TableTH>Группа</TableTH>
+              <TableTH>Альбом</TableTH>
+              <TableTH>Рейтинг</TableTH>
+              <TableTH>Комментарий</TableTH>
+              <TableTH>Дата</TableTH>
+            </TableTR>
+          </TableHead>
+          {loading && (
             <tbody>
-              {model.map((item: IReviewItemModel) => (
-                <TableTR key={item.id}>
-                  <TableTD>{item.group}</TableTD>
-                  <TableTD>{item.album}</TableTD>
-                  <TableTD>
-                    <SvgStarBlock rating={item.rating} />
-                  </TableTD>
-                  <TableTD>{item.comment}</TableTD>
-                  <TableTD>
-                    {CDate.format(item.date, "d MMMM yyyy, HH:mm:ss'")}
+              <tr>
+                <td colSpan={10}>
+                  <TableLoader>
+                    <UiLoader color="#3f51b5" />
+                  </TableLoader>
+                </td>
+              </tr>
+            </tbody>
+          )}
+          {!loading && (
+            <>
+              <tbody>
+                {model.map((item: IReviewItemModel) => (
+                  <TableTR key={item.id} onClick={onTrClick(item.id)}>
+                    <TableTD>{item.group}</TableTD>
+                    <TableTD>{item.album}</TableTD>
+                    <TableTD>
+                      <UiStarsBlock rating={item.rating} />
+                    </TableTD>
+                    <TableTD>{item.comment}</TableTD>
+                    <TableTD>
+                      {CDate.format(item.date, "d MMMM yyyy, HH:mm:ss'")}
+                    </TableTD>
+                  </TableTR>
+                ))}
+              </tbody>
+              <TableFoot>
+                <TableTR>
+                  <TableTD colSpan={10}>
+                    <UiPagination
+                      total={totalAmount}
+                      onPageChange={onPageChange}
+                      onSizePageChange={onSizePageChange}
+                      page={page}
+                      perPage={perPage}
+                    />
                   </TableTD>
                 </TableTR>
-              ))}
-            </tbody>
-            <TableFoot>
-              <TableTR>
-                <TableTD colSpan={10}>
-                  <UiPagination
-                    total={totalAmount}
-                    onPageChange={onPageChange}
-                    onSizePageChange={onSizePageChange}
-                    page={page}
-                    perPage={perPage}
-                  />
-                </TableTD>
-              </TableTR>
-            </TableFoot>
-          </>
-        )}
-      </Table>
-    </Wrapper>
-  </>
-);
+              </TableFoot>
+            </>
+          )}
+        </Table>
+      </Wrapper>
+    </>
+  );
+};
