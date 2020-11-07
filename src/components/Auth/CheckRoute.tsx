@@ -7,6 +7,7 @@ import { ReviewsList } from "containers/Reviews/List";
 import { UiGlobalLoader } from "components/UI/Loaders";
 import { ReviewsForm } from "containers/Reviews/Form";
 
+export const reviewListPath = "/";
 export const reviewFormPath = "/review-form";
 
 export const GlobalContext = React.createContext<{ isAnonymousUser: boolean }>({
@@ -45,10 +46,10 @@ export const CheckRoute = (): React.ReactElement => {
     <Switch>
       {isAuth && (
         <GlobalContext.Provider value={{ isAnonymousUser }}>
-          <Route path="/">
+          <Route path={reviewListPath} exact>
             <ReviewsList />
           </Route>
-          <Route path={[`${reviewFormPath}/:id`, reviewFormPath]}>
+          <Route path={[`${reviewFormPath}/:id`, reviewFormPath]} exact>
             <ReviewsForm />
           </Route>
         </GlobalContext.Provider>

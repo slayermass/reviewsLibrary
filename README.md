@@ -1,1 +1,3 @@
-slayermass's private music library
+#slayermass's private music library
+
+максимально без использования библиотек. для чистого бандла

@@ -1,3 +1,4 @@
+import { StyledButtonLoader } from "components/UI/styled/StyledButtonLoader";
 import React, {
   ChangeEvent,
   SyntheticEvent,
@@ -5,8 +6,6 @@ import React, {
   useState,
 } from "react";
 import styled from "styled-components";
-
-import { UiLoaderButton } from "components/UI/LoaderButton";
 
 const Container = styled.div`
   display: flex;
@@ -61,6 +60,38 @@ const Input = styled.input`
   &:focus {
     box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4),
       0 1px 1px rgba(255, 255, 255, 0.2);
+  }
+`;
+
+const Button = styled.button`
+  width: 100%;
+  display: block;
+  background-image: -webkit-linear-gradient(top, #6eb6de, #4a77d4);
+  background-color: #4a77d4;
+  background-repeat: repeat-x;
+  border: 1px solid #3762bc;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  font-size: 15px;
+  line-height: normal;
+  border-radius: 5px;
+  cursor: pointer;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  &:hover {
+    filter: none;
+    background-color: #4a77d4;
+    transition: background-position 0.1s linear;
+    border: 1px solid #3762bc;
+    background-position: 0 -15px;
+  }
+
+  span {
+    padding: 9px 0;
   }
 `;
 
@@ -121,7 +152,9 @@ export const LoginForm = ({
         <button type="button" onClick={onAnonimLogin}>
           Анонимная авторизация
         </button>
-        <UiLoaderButton type="submit" loading={loading} />
+        <Button type="submit" disabled={loading}>
+          {loading ? <StyledButtonLoader /> : <span>Войти</span>}
+        </Button>
       </Form>
     </Container>
   );

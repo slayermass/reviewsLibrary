@@ -82,6 +82,11 @@ export const ReviewsList = (): React.ReactElement => {
   };
 
   useEffect(() => {
+    // getReviewsList()
+    //   .then(setModel)
+    //   .finally(() => {
+    //     setLoading(false);
+    //   });
     subscribeReviews().onSnapshot(
       /** type? */
       (response: any) => {

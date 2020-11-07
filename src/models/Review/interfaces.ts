@@ -8,3 +8,11 @@ export interface IReviewItemModel {
 }
 
 export type IReviewModel = IReviewItemModel[];
+
+export type IReviewForm = {
+  readonly group: string;
+  readonly album: string;
+  readonly rating: number;
+  readonly comment: string;
+  readonly date: Date;
+};

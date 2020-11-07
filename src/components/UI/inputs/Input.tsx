@@ -105,17 +105,31 @@ type Props = {
   label: string;
   onChange: (v: any) => void;
 
-  type?: "text";
+  value?: string | number;
+  type?: "text" | "number";
+  showClear?: boolean;
+  min?: number;
+  max?: number;
 };
 
 export const UiInput = memo(
-  ({ label, onChange, type = "text" }: Props): React.ReactElement => {
-    const [localValue, setLocalValue] = useState<string>("");
+  ({
+    label,
+    onChange,
+    type = "text",
+    showClear = false,
+    min,
+    max,
+    value,
+  }: Props): React.ReactElement => {
+    const [localValue, setLocalValue] = useState<string>(
+      value ? value.toString() : ""
+    );
 
     const id = Math.random().toString();
 
     useEffect(() => {
-      onChange(localValue);
+      onChange(type === "number" ? +localValue : localValue);
     }, [localValue]);
 
     const [focus, setFocus] = useState(false);
@@ -135,16 +149,20 @@ export const UiInput = memo(
         <Input
           type={type}
           id={id}
+          min={min}
+          max={max}
           onFocus={onFocus}
           onBlur={onBlur}
-          onChange={({ target: { value } }) =>
-            setLocalValue(value.replace(/\s\s+/g, " ").replace(/^\s/, ""))
+          onChange={({ target: { value: inputVal } }) =>
+            setLocalValue(inputVal.replace(/\s\s+/g, " ").replace(/^\s/, ""))
           }
           value={localValue}
         />
-        <ClearButton onClick={onClear}>
-          <SvgRemove />
-        </ClearButton>
+        {showClear && (
+          <ClearButton onClick={onClear}>
+            <SvgRemove />
+          </ClearButton>
+        )}
       </Wrapper>
     );
   }

@@ -34,15 +34,8 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "lines-between-class-members": "off",
     "react/no-array-index-key": "warn",
-    "no-alert": "off",
+    "arrow-body-style": ["error", "as-needed"],
     "@typescript-eslint/camelcase": "off",
-    "jsx-a11y/label-has-for": [ 2, {
-      "components": [ "Label" ],
-      "required": {
-        "every": [ "id" ]
-      },
-      "allowChildren": false
-    }],
     "func-names": ["error", "always", {"generators": "never"}],
     "react/jsx-curly-newline": "off",
     "react/state-in-constructor": "off",

@@ -3,7 +3,8 @@ import "firebase/auth";
 import "firebase/firestore";
 import invariant from "invariant";
 import { ReviewItemModel } from "models/Review";
-import { IReviewItemModel } from "models/Review/interfaces";
+import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
+// import { mockReviewsList } from "utils/mockReviewsList";
 
 const {
   REACT_APP_FIREBASE_API_KEY,
@@ -37,16 +38,6 @@ export const login = (email: string, password: string): Promise<unknown> =>
 /** авторизация. анонимный логин */
 export const loginAnonymously = (): Promise<any> => auth.signInAnonymously();
 
-/** обзоры. список. обычная загрузка */
-// export const getReviewsList = (): Promise<IReviewModel> =>
-//   dbStore
-//     .collection("reviews")
-//     .orderBy("date", "desc")
-//     .get()
-//     .then((response) =>
-//       response.docs.map((i) => new ReviewItemModel({ id: i.id, ...i.data() }))
-//     );
-
 /** обзоры. список. подписка */
 export const subscribeReviews = (): any =>
   dbStore.collection("reviews").orderBy("date", "desc");
@@ -58,6 +49,30 @@ export const getReviewById = (id: string): Promise<IReviewItemModel | null> =>
     .doc(id)
     .get()
     .then((response) =>
-      response.data() ? new ReviewItemModel(response.data()) : null
+      response.data()
+        ? new ReviewItemModel({ id: response.id, ...response.data() })
+        : null
     )
     .catch((err) => err);
+
+/** обзоры. создание */
+export const createReview = async (model: IReviewForm): Promise<void> => {
+  try {
+    const docCreated = await dbStore.collection("reviews").doc();
+    return docCreated.set(model);
+  } catch (e) {
+    return Promise.reject(e);
+  }
+};
+
+/** обзоры. обновление */
+export const updateReview = async (
+  docId: string,
+  model: IReviewForm
+): Promise<void> => dbStore.collection("reviews").doc(docId).set(model);
+
+// MOCK DAA
+// export const getReviewsList = (): Promise<any> =>
+//   new Promise((resolve) => {
+//     setTimeout(() => resolve(mockReviewsList), 10);
+//   });

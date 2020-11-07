@@ -1,4 +1,5 @@
 import { reviewFormPath } from "components/Auth/CheckRoute";
+import { StyledHeader } from "components/UI/styled/StyledHeader";
 import React from "react";
 import styled from "styled-components";
 
@@ -7,7 +8,7 @@ import { IReviewItemModel, IReviewModel } from "models/Review/interfaces";
 import { CDate } from "utils/CDate";
 import { ReviewsFilter } from "components/Reviews/Filter";
 import { UiLoader } from "components/UI/Loaders";
-import { SemiStar, UiStarsBlock } from "components/UI/UiStarsBlock";
+import { UiStarsBlock } from "components/UI/StarsBlock";
 import { OnFilterSearchType } from "containers/Reviews/List";
 import { useHistory } from "react-router-dom";
 
@@ -23,34 +24,6 @@ const Wrapper = styled.div`
     & {
       padding: 4px 10px;
       margin: 64px 4px;
-    }
-  }
-`;
-
-const Header = styled.h1`
-  font-weight: 500;
-  background-color: #f5f8fa;
-  color: #31373c;
-  z-index: 1100;
-  position: fixed;
-  height: 64px;
-  margin: 0;
-  top: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 36px;
-  margin-top: -4px;
-
-  @media (max-width: 400px) {
-    & {
-      font-size: 28px;
-    }
-  }
-
-  @media (max-width: 900px) {
-    & {
-      text-align: center;
     }
   }
 `;
@@ -76,10 +49,6 @@ const TableTR = styled.tr`
   &:hover {
     background-color: #fafafa;
     cursor: pointer;
-
-    ${SemiStar} {
-      background-color: #fafafa;
-    }
   }
 `;
 
@@ -170,7 +139,7 @@ export const ReviewsListComponent = ({
 
   return (
     <>
-      <Header>Музыкальные обзоры</Header>
+      <StyledHeader>Музыкальные обзоры</StyledHeader>
       <Wrapper>
         <ReviewsFilter onFilterSearch={onFilterSearch} />
         <Table>

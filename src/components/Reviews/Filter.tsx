@@ -25,10 +25,10 @@ export const ReviewsFilter = ({
 }: Props): React.ReactElement => (
   <Wrapper>
     <Col>
-      <UiInput label="Группа" onChange={onFilterSearch("group")} />
+      <UiInput label="Группа" onChange={onFilterSearch("group")} showClear />
     </Col>
     <Col>
-      <UiInput label="Альбом" onChange={onFilterSearch("album")} />
+      <UiInput label="Альбом" onChange={onFilterSearch("album")} showClear />
     </Col>
   </Wrapper>
 );

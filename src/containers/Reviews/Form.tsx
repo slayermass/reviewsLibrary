@@ -1,16 +1,21 @@
-import { ReviewFormComponent } from "components/Reviews/Form";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { getReviewById } from "utils/firebase";
-import { IReviewItemModel } from "models/Review/interfaces";
+import { createReview, getReviewById, updateReview } from "utils/firebase";
+import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
 import { UiGlobalLoader } from "components/UI/Loaders";
+import { ReviewFormComponent } from "components/Reviews/Form";
+import { GlobalContext, reviewListPath } from "components/Auth/CheckRoute";
 
 export const ReviewsForm = (): React.ReactElement => {
   const { id } = useParams<{ id?: string }>();
 
-  const [createMode, setCreateMode] = useState(true);
+  const history = useHistory();
+
+  const { isAnonymousUser } = useContext(GlobalContext);
+
+  const [, setCreateMode] = useState(true);
   const [model, setModel] = useState<IReviewItemModel | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,13 +37,63 @@ export const ReviewsForm = (): React.ReactElement => {
         .finally(() => {
           setLoading(false);
         });
+    } else {
+      setLoading(false);
     }
   }, [id]);
 
-  console.log("--", loading, model, createMode);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const onSave = useCallback(
+    (data: IReviewForm) => {
+      if (isAnonymousUser) {
+        return;
+      }
+
+      setIsSaving(true);
+
+      /** создание */
+      if (model === null) {
+        createReview(data)
+          .then(() => {
+            toast.success("Успешно сохранено");
+            history.push(reviewListPath);
+          })
+          .catch((e) => {
+            toast.error(e);
+          })
+          .finally(() => {
+            setIsSaving(false);
+          });
+      } else if (id) {
+        updateReview(id, data)
+          .then(() => {
+            toast.success("Успешно сохранено");
+            history.push(reviewListPath);
+          })
+          .catch((e) => {
+            toast.error(e);
+          })
+          .finally(() => {
+            setIsSaving(false);
+          });
+      } else {
+        toast.error("Непредвиденная ситуация при сохранении");
+        setIsSaving(true);
+      }
+    },
+    [id, model]
+  );
 
   if (loading) {
     return <UiGlobalLoader />;
   }
-  return <ReviewFormComponent model={model} createMode={createMode} />;
+  return (
+    <ReviewFormComponent
+      model={model}
+      onSave={onSave}
+      isSaving={isSaving}
+      canSave={!isAnonymousUser}
+    />
+  );
 };

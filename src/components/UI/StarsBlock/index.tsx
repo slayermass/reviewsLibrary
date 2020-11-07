@@ -17,17 +17,11 @@ const WrapStarBlock = styled.div`
       user-select: none;
       flex-shrink: 0;
     }
-  }
-`;
 
-/** быстрохак для обрезания svg */
-export const SemiStar = styled.div`
-  display: inline-block;
-  width: 12px;
-  height: 24px;
-  position: relative;
-  left: -12px;
-  background: white;
+    &.half {
+      width: 12px;
+    }
+  }
 `;
 
 type Props = {
@@ -63,15 +57,16 @@ export const UiStarsBlock = memo(
         color = "#bdc1c7";
     }
 
-    const isFloatRating = rating % 1 === 0;
+    const rating5 = rating / 2;
+    const isFloatRating = rating5 % 1 !== 0;
+    const starsAmount = Math.ceil(rating5);
 
     return (
       <WrapStarBlock color={color}>
-        {new Array(Math.ceil(rating / 2)).fill(null).map((_, i) => (
+        {new Array(starsAmount).fill(null).map((_, i) => (
           // eslint-disable-next-line react/no-array-index-key
-          <SvgStar key={i} />
+          <SvgStar key={i} half={starsAmount - 1 === i && isFloatRating} />
         ))}
-        {isFloatRating && <SemiStar />}
       </WrapStarBlock>
     );
   }
