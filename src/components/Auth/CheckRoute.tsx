@@ -3,9 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory } from "react-router-dom";
 
 import { LoginPage } from "containers/Auth/Login";
-import { ReviewsList } from "containers/Reviews/List";
 import { UiGlobalLoader } from "components/UI/Loaders";
-import { ReviewsForm } from "containers/Reviews/Form";
+import { InnerRoutes } from "components/InnerRoutes";
 
 export const reviewListPath = "/";
 export const reviewFormPath = "/review-form";
@@ -56,7 +55,7 @@ export const CheckRoute = (): React.ReactElement => {
     ) {
       history.push("/");
     }
-  }, [history, isAnonymousUser, isAuth]);
+  }, [history, isAnonymousUser, isAuth, loadUser]);
 
   if (loadUser) {
     return <UiGlobalLoader />;
@@ -68,12 +67,7 @@ export const CheckRoute = (): React.ReactElement => {
       </Route>
 
       <GlobalContext.Provider value={{ isAnonymousUser, isAuth }}>
-        <Route path={reviewListPath} exact>
-          <ReviewsList />
-        </Route>
-        <Route path={[`${reviewFormPath}/:id`, reviewFormPath]} exact>
-          <ReviewsForm />
-        </Route>
+        <InnerRoutes isAuth={isAuth} />
       </GlobalContext.Provider>
     </Switch>
   );

@@ -138,7 +138,7 @@ type Props = {
   totalAmount: number;
   loading: boolean;
   onFilterSearch: OnFilterSearchType;
-  isExistUser: boolean; // реальный ли пользователь ( не аноним )
+  realUser: boolean; // реальный ли пользователь ( не аноним )
 };
 
 export const ReviewsListComponent = ({
@@ -150,28 +150,30 @@ export const ReviewsListComponent = ({
   totalAmount,
   loading,
   onFilterSearch,
-  isExistUser,
+  realUser,
 }: Props): React.ReactElement => {
   const history = useHistory();
 
   const onTrClick = (id: string) => () =>
-    isExistUser && history.push(`${reviewFormPath}/${id}`);
+    realUser && history.push(`${reviewFormPath}/${id}`);
 
   return (
     <>
       <StyledHeader>Музыкальные обзоры</StyledHeader>
       <Wrapper>
         <ReviewsFilter onFilterSearch={onFilterSearch} />
-        <RowCreate>
-          <StyledCol>
-            <CreateLink to={reviewFormPath}>
-              <CreateButton>
-                <SvgPlus />
-                Создать обзор
-              </CreateButton>
-            </CreateLink>
-          </StyledCol>
-        </RowCreate>
+        {realUser && (
+          <RowCreate>
+            <StyledCol>
+              <CreateLink to={reviewFormPath}>
+                <CreateButton>
+                  <SvgPlus />
+                  Создать обзор
+                </CreateButton>
+              </CreateLink>
+            </StyledCol>
+          </RowCreate>
+        )}
         <Table>
           <TableHead>
             <TableTR>

@@ -105,7 +105,7 @@ export const ReviewsList = (): React.ReactElement => {
     );
   }, []);
 
-  const GlobalContextValue = useContext(GlobalContext);
+  const { isAnonymousUser } = useContext(GlobalContext);
 
   return (
     <ReviewsListComponent
@@ -117,7 +117,7 @@ export const ReviewsList = (): React.ReactElement => {
       perPage={filter.perPage}
       totalAmount={modelToRender.amount}
       loading={loading}
-      isExistUser={!GlobalContextValue.isAnonymousUser}
+      realUser={!isAnonymousUser}
     />
   );
 };
