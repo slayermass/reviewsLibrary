@@ -28,8 +28,8 @@ export const App = (): React.ReactElement => (
       transition={Zoom}
       draggable={false}
     />
+    <Normalize />
     <Router>
-      <Normalize />
       <CheckRoute />
     </Router>
   </>

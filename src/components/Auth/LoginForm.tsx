@@ -106,8 +106,8 @@ export const LoginForm = ({
   onAnonimLogin,
   loading,
 }: Props): React.ReactElement => {
-  const [email, setEmail] = useState("y@Y.ru");
-  const [password, setPassword] = useState("asd4");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onChange = useCallback(
     ({ target: { type, value } }: ChangeEvent<HTMLInputElement>) => {

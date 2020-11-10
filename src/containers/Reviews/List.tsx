@@ -1,4 +1,3 @@
-import { GlobalContext } from "components/Auth/CheckRoute";
 import { toast } from "react-toastify";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
@@ -7,17 +6,19 @@ import { defaultSizePageTable } from "config";
 import { ReviewItemModel } from "models/Review";
 import { IReviewModel } from "models/Review/interfaces";
 import { subscribeReviews } from "utils/firebase";
+import { GlobalContext } from "components/Auth/CheckRoute";
 
 export type ReviewsListFilter = {
   perPage: number;
   page: number;
   group: string;
   album: string;
+  rating: number;
 };
 
 export type OnFilterSearchType = (
-  name: "group" | "album"
-) => (value: string) => void;
+  name: "group" | "album" | "rating"
+) => (value: string | number) => void;
 
 export const ReviewsList = (): React.ReactElement => {
   const [model, setModel] = useState<IReviewModel | null>(null);
@@ -33,6 +34,7 @@ export const ReviewsList = (): React.ReactElement => {
     page: 1,
     group: "",
     album: "",
+    rating: 0,
   });
 
   /** сложно получилось. надо проще */
@@ -44,15 +46,16 @@ export const ReviewsList = (): React.ReactElement => {
     let total = modelToFilter.length;
     let searched = false;
 
+    const { album, group, rating } = filter;
+    const lowerGroup = group.toLowerCase();
+    const lowerAlbum = album.toLowerCase();
+
     /** фильтровать по всем записям */
-    if (filter.album.length || filter.group.length) {
+    if (album.length || group.length || rating > 0) {
       filteredModel = modelToFilter
-        .filter((item) =>
-          item.group.toLowerCase().includes(filter.group.toLowerCase())
-        )
-        .filter((item) =>
-          item.album.toLowerCase().includes(filter.album.toLowerCase())
-        );
+        .filter((item) => item.group.toLowerCase().includes(lowerGroup))
+        .filter((item) => item.album.toLowerCase().includes(lowerAlbum))
+        .filter((item) => item.rating === rating);
 
       total = filteredModel.length;
       searched = true;
@@ -67,12 +70,8 @@ export const ReviewsList = (): React.ReactElement => {
     setModalToRender({ data: filteredModel, amount: total });
   }, [filter, model]);
 
-  useEffect(() => {
-    console.log("filter changed", filter);
-  }, [filter]);
-
   const onSizePageChange = (perPage: number) => {
-    setFilter({ ...filter, perPage });
+    setFilter({ ...filter, perPage, page: 1 });
   };
 
   const onPageChange = (page: number) => setFilter({ ...filter, page });

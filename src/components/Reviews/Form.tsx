@@ -1,19 +1,40 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import { UiLoaderSubmitButton } from "components/UI/buttons/LoaderButton";
 import { UiInput } from "components/UI/inputs/Input";
 import { StyledHeader } from "components/UI/styled/StyledHeader";
 import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
+import { StyledButton } from "components/UI/styled/StyledButton";
 
 const Card = styled.div`
   background: #fff;
   margin: 64px 36px;
   padding: 20px;
+  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+  border-radius: 4px;
 `;
 
+const Buttons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+`;
 const InputRow = styled.div`
   padding: 10px 0;
+`;
+
+const CancelButton = styled(StyledButton)`
+  color: #3f51b5;
+  border: 1px solid rgba(63, 81, 181, 0.5);
+
+  &:hover {
+    border: 1px solid #3f51b5;
+    background-color: rgba(63, 81, 181, 0.08);
+  }
 `;
 
 const getOrElse = (
@@ -57,6 +78,10 @@ export const ReviewFormComponent = ({
     }
   }, [group, album, rating, comment]);
 
+  const history = useHistory();
+
+  const onReset = useCallback(() => history.goBack(), [history]);
+
   const onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -74,40 +99,48 @@ export const ReviewFormComponent = ({
   };
 
   return (
-    <Card>
+    <>
       <StyledHeader>
         Форма {model === null ? "создания" : "редактирования"} обзора
       </StyledHeader>
+      <Card>
+        <form onSubmit={onSubmit} onReset={onReset}>
+          <InputRow>
+            <UiInput label="Группа" onChange={setGroup} value={group} />
+          </InputRow>
+          <InputRow>
+            <UiInput label="Альбом" onChange={setAlbum} value={album} />
+          </InputRow>
+          <InputRow>
+            <UiInput
+              label="Оценка"
+              onChange={setRating}
+              type="number"
+              min={1}
+              max={10}
+              value={rating}
+            />
+          </InputRow>
+          <InputRow>
+            <UiInput
+              label="Комментарий"
+              onChange={setComment}
+              value={comment}
+            />
+          </InputRow>
 
-      <form onSubmit={onSubmit}>
-        <InputRow>
-          <UiInput label="Группа" onChange={setGroup} value={group} />
-        </InputRow>
-        <InputRow>
-          <UiInput label="Альбом" onChange={setAlbum} value={album} />
-        </InputRow>
-        <InputRow>
-          <UiInput
-            label="Оценка"
-            onChange={setRating}
-            type="number"
-            min={1}
-            max={10}
-            value={rating}
-          />
-        </InputRow>
-        <InputRow>
-          <UiInput label="Комментарий" onChange={setComment} value={comment} />
-        </InputRow>
-
-        {canSave && (
-          <UiLoaderSubmitButton
-            disabled={!isSubmitActive}
-            loading={isSaving}
-            text="Сохранить"
-          />
-        )}
-      </form>
-    </Card>
+          {canSave && (
+            <Buttons>
+              <CancelButton type="reset">Отмена</CancelButton>
+              <UiLoaderSubmitButton
+                disabled={!isSubmitActive}
+                loading={isSaving}
+                text="Сохранить"
+              />
+            </Buttons>
+          )}
+        </form>
+      </Card>
+    </>
   );
 };

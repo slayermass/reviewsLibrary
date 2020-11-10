@@ -1,7 +1,6 @@
-import { reviewFormPath } from "components/Auth/CheckRoute";
-import { StyledHeader } from "components/UI/styled/StyledHeader";
 import React from "react";
 import styled from "styled-components";
+import { Link, useHistory } from "react-router-dom";
 
 import { UiPagination } from "components/UI/Pagination";
 import { IReviewItemModel, IReviewModel } from "models/Review/interfaces";
@@ -10,7 +9,11 @@ import { ReviewsFilter } from "components/Reviews/Filter";
 import { UiLoader } from "components/UI/Loaders";
 import { UiStarsBlock } from "components/UI/StarsBlock";
 import { OnFilterSearchType } from "containers/Reviews/List";
-import { useHistory } from "react-router-dom";
+import { reviewFormPath } from "components/Auth/CheckRoute";
+import { StyledPrimaryButton } from "components/UI/styled/StyledButton";
+import { StyledHeader } from "components/UI/styled/StyledHeader";
+import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
+import { SvgPlus } from "assets/svg/plus";
 
 const Wrapper = styled.div`
   padding: 20px;
@@ -109,6 +112,23 @@ const TableLoader = styled.div`
   align-items: center;
 `;
 
+const RowCreate = styled(StyledRow)`
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const CreateButton = styled(StyledPrimaryButton)`
+  width: 100%;
+
+  svg {
+    width: 24px;
+  }
+`;
+const CreateLink = styled(Link)`
+  text-decoration: none;
+`;
+
 type Props = {
   model: IReviewModel;
   onSizePageChange: (p: number) => void;
@@ -142,6 +162,16 @@ export const ReviewsListComponent = ({
       <StyledHeader>Музыкальные обзоры</StyledHeader>
       <Wrapper>
         <ReviewsFilter onFilterSearch={onFilterSearch} />
+        <RowCreate>
+          <StyledCol>
+            <CreateLink to={reviewFormPath}>
+              <CreateButton>
+                <SvgPlus />
+                Создать обзор
+              </CreateButton>
+            </CreateLink>
+          </StyledCol>
+        </RowCreate>
         <Table>
           <TableHead>
             <TableTR>

@@ -3,17 +3,12 @@ import styled from "styled-components";
 
 import { UiInput } from "components/UI/inputs/Input";
 import { OnFilterSearchType } from "containers/Reviews/List";
+import { ratingList } from "config";
+import { UiSelect } from "components/UI/inputs/Select";
+import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 -1rem;
+const Wrapper = styled(StyledRow)`
   margin-bottom: 0.5rem;
-`;
-const Col = styled.div`
-  width: calc(100% / 3 - 2rem);
-
-  padding: 0 1rem;
 `;
 
 type Props = {
@@ -24,11 +19,14 @@ export const ReviewsFilter = ({
   onFilterSearch,
 }: Props): React.ReactElement => (
   <Wrapper>
-    <Col>
+    <StyledCol>
       <UiInput label="Группа" onChange={onFilterSearch("group")} showClear />
-    </Col>
-    <Col>
+    </StyledCol>
+    <StyledCol>
       <UiInput label="Альбом" onChange={onFilterSearch("album")} showClear />
-    </Col>
+    </StyledCol>
+    <StyledCol>
+      <UiSelect onChange={onFilterSearch("rating")} options={ratingList} />
+    </StyledCol>
   </Wrapper>
 );

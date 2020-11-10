@@ -10,8 +10,12 @@ import { ReviewsForm } from "containers/Reviews/Form";
 export const reviewListPath = "/";
 export const reviewFormPath = "/review-form";
 
-export const GlobalContext = React.createContext<{ isAnonymousUser: boolean }>({
+export const GlobalContext = React.createContext<{
+  isAnonymousUser: boolean;
+  isAuth: boolean;
+}>({
   isAnonymousUser: true,
+  isAuth: false,
 });
 
 export const CheckRoute = (): React.ReactElement => {
@@ -32,32 +36,45 @@ export const CheckRoute = (): React.ReactElement => {
       }
 
       setLoadUser(false);
-
-      if (!user) {
-        history.push("/login");
-      }
     });
   }, [history]);
+
+  useEffect(() => {
+    const { pathname } = history.location;
+
+    /** защита роутов от неавторизованных */
+    if (!loadUser && !isAuth && pathname !== "/login") {
+      history.push("/login");
+    }
+
+    /** защита роутов от анонимов */
+    if (
+      !loadUser &&
+      [reviewFormPath].find(
+        (path) => isAnonymousUser && pathname.includes(path)
+      )
+    ) {
+      history.push("/");
+    }
+  }, [history, isAnonymousUser, isAuth]);
 
   if (loadUser) {
     return <UiGlobalLoader />;
   }
   return (
     <Switch>
-      {isAuth && (
-        <GlobalContext.Provider value={{ isAnonymousUser }}>
-          <Route path={reviewListPath} exact>
-            <ReviewsList />
-          </Route>
-          <Route path={[`${reviewFormPath}/:id`, reviewFormPath]} exact>
-            <ReviewsForm />
-          </Route>
-        </GlobalContext.Provider>
-      )}
-
       <Route path="/login">
         <LoginPage />
       </Route>
+
+      <GlobalContext.Provider value={{ isAnonymousUser, isAuth }}>
+        <Route path={reviewListPath} exact>
+          <ReviewsList />
+        </Route>
+        <Route path={[`${reviewFormPath}/:id`, reviewFormPath]} exact>
+          <ReviewsForm />
+        </Route>
+      </GlobalContext.Provider>
     </Switch>
   );
 };
