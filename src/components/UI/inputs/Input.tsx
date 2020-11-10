@@ -110,6 +110,7 @@ type Props = {
   showClear?: boolean;
   min?: number;
   max?: number;
+  maxLength?: number;
 };
 
 export const UiInput = memo(
@@ -121,6 +122,7 @@ export const UiInput = memo(
     min,
     max,
     value,
+    maxLength,
   }: Props): React.ReactElement => {
     const [localValue, setLocalValue] = useState<string>(
       value ? value.toString() : ""
@@ -151,6 +153,7 @@ export const UiInput = memo(
           id={id}
           min={min}
           max={max}
+          maxLength={maxLength}
           onFocus={onFocus}
           onBlur={onBlur}
           onChange={({ target: { value: inputVal } }) =>

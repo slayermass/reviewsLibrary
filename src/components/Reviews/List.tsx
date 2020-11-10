@@ -139,6 +139,7 @@ type Props = {
   loading: boolean;
   onFilterSearch: OnFilterSearchType;
   realUser: boolean; // реальный ли пользователь ( не аноним )
+  userEmail: string | null;
 };
 
 export const ReviewsListComponent = ({
@@ -151,6 +152,7 @@ export const ReviewsListComponent = ({
   loading,
   onFilterSearch,
   realUser,
+  userEmail,
 }: Props): React.ReactElement => {
   const history = useHistory();
 
@@ -159,7 +161,9 @@ export const ReviewsListComponent = ({
 
   return (
     <>
-      <StyledHeader>Музыкальные обзоры</StyledHeader>
+      <StyledHeader>
+        Музыкальные обзоры ({userEmail || "Почта не указана"})
+      </StyledHeader>
       <Wrapper>
         <ReviewsFilter onFilterSearch={onFilterSearch} />
         {realUser && (

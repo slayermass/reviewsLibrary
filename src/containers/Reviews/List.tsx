@@ -47,15 +47,28 @@ export const ReviewsList = (): React.ReactElement => {
     let searched = false;
 
     const { album, group, rating } = filter;
-    const lowerGroup = group.toLowerCase();
-    const lowerAlbum = album.toLowerCase();
 
     /** фильтровать по всем записям */
     if (album.length || group.length || rating > 0) {
-      filteredModel = modelToFilter
-        .filter((item) => item.group.toLowerCase().includes(lowerGroup))
-        .filter((item) => item.album.toLowerCase().includes(lowerAlbum))
-        .filter((item) => item.rating === rating);
+      filteredModel = modelToFilter;
+
+      if (album.length) {
+        const lowerAlbum = album.toLowerCase();
+
+        filteredModel = filteredModel.filter((item) =>
+          item.album.toLowerCase().includes(lowerAlbum)
+        );
+      }
+      if (group.length) {
+        const lowerGroup = group.toLowerCase();
+
+        filteredModel = filteredModel.filter((item) =>
+          item.group.toLowerCase().includes(lowerGroup)
+        );
+      }
+      if (rating > 0) {
+        filteredModel = filteredModel.filter((item) => item.rating === rating);
+      }
 
       total = filteredModel.length;
       searched = true;
@@ -80,7 +93,10 @@ export const ReviewsList = (): React.ReactElement => {
     setFilter({ ...filter, [name]: value });
   };
 
+  const { isAnonymousUser, userEmail } = useContext(GlobalContext);
+
   useEffect(() => {
+    console.log("загрузка обзоров пользователя ", userEmail);
     // getReviewsList()
     //   .then(setModel)
     //   .finally(() => {
@@ -103,9 +119,7 @@ export const ReviewsList = (): React.ReactElement => {
         toast.error(`Ошибка получения списка обзоров: "${err.name}"`);
       }
     );
-  }, []);
-
-  const { isAnonymousUser } = useContext(GlobalContext);
+  }, [userEmail]);
 
   return (
     <ReviewsListComponent
@@ -118,6 +132,7 @@ export const ReviewsList = (): React.ReactElement => {
       totalAmount={modelToRender.amount}
       loading={loading}
       realUser={!isAnonymousUser}
+      userEmail={userEmail}
     />
   );
 };

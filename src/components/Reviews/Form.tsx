@@ -106,10 +106,20 @@ export const ReviewFormComponent = ({
       <Card>
         <form onSubmit={onSubmit} onReset={onReset}>
           <InputRow>
-            <UiInput label="Группа" onChange={setGroup} value={group} />
+            <UiInput
+              label="Группа"
+              onChange={setGroup}
+              value={group}
+              maxLength={100}
+            />
           </InputRow>
           <InputRow>
-            <UiInput label="Альбом" onChange={setAlbum} value={album} />
+            <UiInput
+              label="Альбом"
+              onChange={setAlbum}
+              value={album}
+              maxLength={100}
+            />
           </InputRow>
           <InputRow>
             <UiInput
@@ -126,6 +136,7 @@ export const ReviewFormComponent = ({
               label="Комментарий"
               onChange={setComment}
               value={comment}
+              maxLength={600}
             />
           </InputRow>
 

@@ -12,14 +12,17 @@ export const reviewFormPath = "/review-form";
 export const GlobalContext = React.createContext<{
   isAnonymousUser: boolean;
   isAuth: boolean;
+  userEmail: string | null;
 }>({
   isAnonymousUser: true,
   isAuth: false,
+  userEmail: null,
 });
 
 export const CheckRoute = (): React.ReactElement => {
   const history = useHistory();
   const [loadUser, setLoadUser] = useState(true);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isAuth, setIsAuth] = useState(false);
   const [isAnonymousUser, setIsAnonymousUser] = useState(true);
 
@@ -27,7 +30,11 @@ export const CheckRoute = (): React.ReactElement => {
   useEffect(() => {
     app.auth().onAuthStateChanged((user) => {
       if (user) {
+        // user.updateProfile({
+        //   displayName: "slayermass",
+        // })
         setIsAuth(true);
+        setUserEmail(user.email);
 
         if (!user.isAnonymous) {
           setIsAnonymousUser(false);
@@ -66,7 +73,7 @@ export const CheckRoute = (): React.ReactElement => {
         <LoginPage />
       </Route>
 
-      <GlobalContext.Provider value={{ isAnonymousUser, isAuth }}>
+      <GlobalContext.Provider value={{ isAnonymousUser, isAuth, userEmail }}>
         <InnerRoutes isAuth={isAuth} />
       </GlobalContext.Provider>
     </Switch>

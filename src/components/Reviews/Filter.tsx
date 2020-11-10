@@ -20,10 +20,20 @@ export const ReviewsFilter = ({
 }: Props): React.ReactElement => (
   <Wrapper>
     <StyledCol>
-      <UiInput label="Группа" onChange={onFilterSearch("group")} showClear />
+      <UiInput
+        label="Группа"
+        onChange={onFilterSearch("group")}
+        showClear
+        maxLength={100}
+      />
     </StyledCol>
     <StyledCol>
-      <UiInput label="Альбом" onChange={onFilterSearch("album")} showClear />
+      <UiInput
+        label="Альбом"
+        onChange={onFilterSearch("album")}
+        showClear
+        maxLength={100}
+      />
     </StyledCol>
     <StyledCol>
       <UiSelect onChange={onFilterSearch("rating")} options={ratingList} />
