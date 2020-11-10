@@ -97,15 +97,10 @@ const Button = styled.button`
 
 type Props = {
   onLogin: (email: string, password: string) => void;
-  onAnonimLogin: () => void;
   loading: boolean;
 };
 
-export const LoginForm = ({
-  onLogin,
-  onAnonimLogin,
-  loading,
-}: Props): React.ReactElement => {
+export const LoginForm = ({ onLogin, loading }: Props): React.ReactElement => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -149,9 +144,6 @@ export const LoginForm = ({
           value={password}
           onChange={onChange}
         />
-        <button type="button" onClick={onAnonimLogin}>
-          Анонимная авторизация
-        </button>
         <Button type="submit" disabled={loading}>
           {loading ? <StyledButtonLoader /> : <span>Войти</span>}
         </Button>

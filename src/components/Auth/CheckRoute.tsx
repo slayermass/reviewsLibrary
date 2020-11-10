@@ -11,11 +11,9 @@ export const reviewFormPath = "/review-form";
 
 export const GlobalContext = React.createContext<{
   isAnonymousUser: boolean;
-  isAuth: boolean;
-  userEmail: string | null;
+  userEmail: string | null; // string всегда, иначе зайти не получится
 }>({
   isAnonymousUser: true,
-  isAuth: false,
   userEmail: null,
 });
 
@@ -23,17 +21,12 @@ export const CheckRoute = (): React.ReactElement => {
   const history = useHistory();
   const [loadUser, setLoadUser] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [isAuth, setIsAuth] = useState(false);
   const [isAnonymousUser, setIsAnonymousUser] = useState(true);
 
   /** проверить авторизованность пользователя */
   useEffect(() => {
     app.auth().onAuthStateChanged((user) => {
       if (user) {
-        // user.updateProfile({
-        //   displayName: "slayermass",
-        // })
-        setIsAuth(true);
         setUserEmail(user.email);
 
         if (!user.isAnonymous) {
@@ -49,7 +42,7 @@ export const CheckRoute = (): React.ReactElement => {
     const { pathname } = history.location;
 
     /** защита роутов от неавторизованных */
-    if (!loadUser && !isAuth && pathname !== "/login") {
+    if (!loadUser && userEmail === null && pathname !== "/login") {
       history.push("/login");
     }
 
@@ -62,7 +55,7 @@ export const CheckRoute = (): React.ReactElement => {
     ) {
       history.push("/");
     }
-  }, [history, isAnonymousUser, isAuth, loadUser]);
+  }, [history, isAnonymousUser, loadUser]);
 
   if (loadUser) {
     return <UiGlobalLoader />;
@@ -73,8 +66,8 @@ export const CheckRoute = (): React.ReactElement => {
         <LoginPage />
       </Route>
 
-      <GlobalContext.Provider value={{ isAnonymousUser, isAuth, userEmail }}>
-        <InnerRoutes isAuth={isAuth} />
+      <GlobalContext.Provider value={{ isAnonymousUser, userEmail }}>
+        <InnerRoutes isAuth={userEmail !== null} />
       </GlobalContext.Provider>
     </Switch>
   );

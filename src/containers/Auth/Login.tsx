@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { LoginForm } from "components/Auth/LoginForm";
-import { login, loginAnonymously } from "utils/firebase";
+import { login } from "utils/firebase";
 
 let mount = false;
 
@@ -40,30 +40,24 @@ export const LoginPage = (): React.ReactElement => {
       });
   };
 
-  const onAnonimLogin = useCallback(() => {
-    setLoading(true);
+  // const onAnonimLogin = useCallback(() => {
+  //   setLoading(true);
+  //
+  //   loginAnonymously()
+  //     .then(() => {
+  //       history.push("/");
+  //     })
+  //     .catch((err) => {
+  //       // eslint-disable-next-line no-console
+  //       console.error(err.message);
+  //       toast.error(`Ошибка анонимной авторизации`);
+  //     })
+  //     .finally(() => {
+  //       if (mount) {
+  //         setLoading(false);
+  //       }
+  //     });
+  // }, []);
 
-    loginAnonymously()
-      .then(() => {
-        history.push("/");
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err.message);
-        toast.error(`Ошибка анонимной авторизации`);
-      })
-      .finally(() => {
-        if (mount) {
-          setLoading(false);
-        }
-      });
-  }, []);
-
-  return (
-    <LoginForm
-      onLogin={onLogin}
-      loading={loading}
-      onAnonimLogin={onAnonimLogin}
-    />
-  );
+  return <LoginForm onLogin={onLogin} loading={loading} />;
 };

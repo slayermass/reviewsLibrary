@@ -5,6 +5,7 @@ export interface IReviewItemModel {
   readonly group: string;
   readonly id: string;
   readonly rating: number; // 1-10
+  readonly author: string; // почта пользователя
 }
 
 export type IReviewModel = IReviewItemModel[];
@@ -15,4 +16,5 @@ export type IReviewForm = {
   readonly rating: number;
   readonly comment: string;
   readonly date: Date;
+  readonly author: string;
 };

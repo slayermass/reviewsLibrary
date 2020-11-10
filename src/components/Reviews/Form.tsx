@@ -49,6 +49,7 @@ type Props = {
   onSave: (d: IReviewForm) => void;
   isSaving: boolean;
   canSave: boolean;
+  userEmail: string | null;
 };
 
 export const ReviewFormComponent = ({
@@ -56,6 +57,7 @@ export const ReviewFormComponent = ({
   onSave,
   isSaving,
   canSave,
+  userEmail,
 }: Props): React.ReactElement => {
   const [isSubmitActive, setIsSubmitActive] = useState(false);
 
@@ -95,13 +97,15 @@ export const ReviewFormComponent = ({
       rating,
       comment: comment.toLowerCase(),
       date: getOrElse(model, "date", new Date()),
+      author: userEmail || "",
     });
   };
 
   return (
     <>
       <StyledHeader>
-        Форма {model === null ? "создания" : "редактирования"} обзора
+        Форма {model === null ? "создания" : "редактирования"} обзора (
+        {userEmail || "Почта не указана"})
       </StyledHeader>
       <Card>
         <form onSubmit={onSubmit} onReset={onReset}>

@@ -13,7 +13,7 @@ export const ReviewsForm = (): React.ReactElement => {
 
   const history = useHistory();
 
-  const { isAnonymousUser } = useContext(GlobalContext);
+  const { isAnonymousUser, userEmail } = useContext(GlobalContext);
 
   const [, setCreateMode] = useState(true);
   const [model, setModel] = useState<IReviewItemModel | null>(null);
@@ -94,6 +94,7 @@ export const ReviewsForm = (): React.ReactElement => {
       onSave={onSave}
       isSaving={isSaving}
       canSave={!isAnonymousUser}
+      userEmail={userEmail}
     />
   );
 };

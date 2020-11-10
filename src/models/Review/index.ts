@@ -8,6 +8,7 @@ export class ReviewItemModel implements IReviewItemModel {
   readonly group: string;
   readonly id: string;
   readonly rating: number;
+  readonly author: string;
 
   constructor(params: any = {}) {
     this.album = params.album;
@@ -16,5 +17,6 @@ export class ReviewItemModel implements IReviewItemModel {
     this.group = params.group;
     this.id = params.id;
     this.rating = params.rating;
+    this.author = params.author;
   }
 }

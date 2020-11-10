@@ -96,13 +96,16 @@ export const ReviewsList = (): React.ReactElement => {
   const { isAnonymousUser, userEmail } = useContext(GlobalContext);
 
   useEffect(() => {
-    console.log("загрузка обзоров пользователя ", userEmail);
+    if (userEmail === null) {
+      toast.error("Не указан email. Критическая ошибка");
+      return;
+    }
     // getReviewsList()
     //   .then(setModel)
     //   .finally(() => {
     //     setLoading(false);
     //   });
-    subscribeReviews().onSnapshot(
+    subscribeReviews(userEmail).onSnapshot(
       /** type? */
       (response: any) => {
         setLoading(true);
@@ -116,6 +119,8 @@ export const ReviewsList = (): React.ReactElement => {
       },
       (err: Error) => {
         setLoading(false);
+        // eslint-disable-next-line no-console
+        console.error(err);
         toast.error(`Ошибка получения списка обзоров: "${err.name}"`);
       }
     );
