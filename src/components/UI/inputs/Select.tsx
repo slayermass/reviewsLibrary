@@ -47,27 +47,38 @@ const Wrapper = styled.div`
   }
 `;
 
-type Props = {
-  onChange: (v: string | number) => void;
-  options: Array<string | number>;
+export type SelectOptionType = {
+  label: string;
+  value: string | number;
 };
 
-export const UiSelect = ({ onChange, options }: Props): React.ReactElement => {
+export type SelectOptionsType = SelectOptionType[];
+
+type Props = {
+  label: string;
+  onChange: (v: string | number) => void;
+  options: SelectOptionsType;
+};
+
+export const UiSelect = ({
+  onChange,
+  options,
+  label,
+}: Props): React.ReactElement => {
   const id = Math.random().toString();
 
   return (
     <Wrapper>
-      <Label htmlFor={id}>Рейтинг</Label>
+      <Label htmlFor={id}>{label}</Label>
       <Select
         onChange={({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
-          onChange(+value);
+          onChange(value);
         }}
-        defaultValue={0}
+        defaultValue={options[0].value}
       >
-        <option value="0">Любой</option>
-        {options.map((rating) => (
-          <option value={rating} key={rating}>
-            {rating}
+        {options.map(({ value, label: option }) => (
+          <option value={value} key={`${value}${option}`}>
+            {option}
           </option>
         ))}
       </Select>

@@ -8,7 +8,7 @@ import { CDate } from "utils/CDate";
 import { ReviewsFilter } from "components/Reviews/Filter";
 import { UiLoader } from "components/UI/Loaders";
 import { UiStarsBlock } from "components/UI/StarsBlock";
-import { OnFilterSearchType } from "containers/Reviews/List";
+import { ListSortType, OnFilterSearchType } from "containers/Reviews/List";
 import { reviewFormPath } from "components/Auth/CheckRoute";
 import { StyledPrimaryButton } from "components/UI/styled/StyledButton";
 import { StyledHeader } from "components/UI/styled/StyledHeader";
@@ -133,6 +133,7 @@ type Props = {
   model: IReviewModel;
   onSizePageChange: (p: number) => void;
   onPageChange: (p: number) => void;
+  onSortChange: (sort: ListSortType) => void;
   page: number;
   perPage: number;
   totalAmount: number;
@@ -146,6 +147,7 @@ export const ReviewsListComponent = ({
   model,
   onSizePageChange,
   onPageChange,
+  onSortChange,
   page,
   perPage,
   totalAmount,
@@ -165,7 +167,10 @@ export const ReviewsListComponent = ({
         Музыкальные обзоры ({userEmail || "Почта не указана"})
       </StyledHeader>
       <Wrapper>
-        <ReviewsFilter onFilterSearch={onFilterSearch} />
+        <ReviewsFilter
+          onFilterSearch={onFilterSearch}
+          onSortChange={onSortChange}
+        />
         {realUser && (
           <RowCreate>
             <StyledCol>

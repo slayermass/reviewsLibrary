@@ -8,12 +8,15 @@ import { IReviewModel } from "models/Review/interfaces";
 import { subscribeReviews } from "utils/firebase";
 import { GlobalContext } from "components/Auth/CheckRoute";
 
+export type ListSortType = "none" | "ratingAsc" | "ratingDesc";
+
 export type ReviewsListFilter = {
   perPage: number;
   page: number;
   group: string;
   album: string;
   rating: number;
+  sort: ListSortType;
 };
 
 export type OnFilterSearchType = (
@@ -35,6 +38,7 @@ export const ReviewsList = (): React.ReactElement => {
     group: "",
     album: "",
     rating: 0,
+    sort: "none",
   });
 
   /** сложно получилось. надо проще */
@@ -46,7 +50,7 @@ export const ReviewsList = (): React.ReactElement => {
     let total = modelToFilter.length;
     let searched = false;
 
-    const { album, group, rating } = filter;
+    const { album, group, rating, sort } = filter;
 
     /** фильтровать по всем записям */
     if (album.length || group.length || rating > 0) {
@@ -74,8 +78,43 @@ export const ReviewsList = (): React.ReactElement => {
       searched = true;
     }
 
-    /** обрезать по вывод страницы */
-    filteredModel = (searched ? filteredModel : modelToFilter).slice(
+    filteredModel = searched ? filteredModel : modelToFilter;
+
+    /**
+     * применение сортировки
+     * необходима оптимизация - сортировка только n необходимых для показа записей. остальные игнорировать
+     */
+    switch (sort) {
+      case "ratingAsc":
+        filteredModel = filteredModel.sort(
+          ({ rating: compLeft }, { rating: compRight }) => {
+            if (compLeft > compRight) {
+              return 1;
+            }
+            return compLeft < compRight ? -1 : 0;
+          }
+        );
+        break;
+      case "ratingDesc":
+        filteredModel.sort(({ rating: compLeft }, { rating: compRight }) => {
+          if (compLeft < compRight) {
+            return 1;
+          }
+          return compLeft > compRight ? -1 : 0;
+        });
+        break;
+      default:
+        filteredModel.sort(({ date: compLeft }, { date: compRight }) => {
+          if (compLeft < compRight) {
+            return 1;
+          }
+          return compLeft > compRight ? -1 : 0;
+        });
+        break;
+    }
+
+    /** обрезать по выводу страницы */
+    filteredModel = filteredModel.slice(
       (filter.page - 1) * filter.perPage,
       filter.page * filter.perPage
     );
@@ -88,6 +127,8 @@ export const ReviewsList = (): React.ReactElement => {
   };
 
   const onPageChange = (page: number) => setFilter({ ...filter, page });
+
+  const onSortChange = (sort: ListSortType) => setFilter({ ...filter, sort });
 
   const onFilterSearch: OnFilterSearchType = (name) => (value) => {
     setFilter({ ...filter, [name]: value });
@@ -132,6 +173,7 @@ export const ReviewsList = (): React.ReactElement => {
       onSizePageChange={onSizePageChange}
       onPageChange={onPageChange}
       onFilterSearch={onFilterSearch}
+      onSortChange={onSortChange}
       page={filter.page}
       perPage={filter.perPage}
       totalAmount={modelToRender.amount}
