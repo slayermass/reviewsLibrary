@@ -40,10 +40,7 @@ export const loginAnonymously = (): Promise<any> => auth.signInAnonymously();
 
 /** обзоры. список. подписка */
 export const subscribeReviews = (email: string): any =>
-  dbStore
-    .collection("reviews")
-    .where("author", "==", email)
-    .orderBy("date", "desc");
+  dbStore.collection("reviews").where("author", "==", email);
 
 /** обзоры. данные одного обзора */
 export const getReviewById = (id: string): Promise<IReviewItemModel | null> =>

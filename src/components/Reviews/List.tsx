@@ -8,12 +8,13 @@ import { CDate } from "utils/CDate";
 import { ReviewsFilter } from "components/Reviews/Filter";
 import { UiLoader } from "components/UI/Loaders";
 import { UiStarsBlock } from "components/UI/StarsBlock";
-import { ListSortType, OnFilterSearchType } from "containers/Reviews/List";
+import { OnFilterSearchType } from "containers/Reviews/List";
 import { reviewFormPath } from "components/Auth/CheckRoute";
 import { StyledPrimaryButton } from "components/UI/styled/StyledButton";
 import { StyledHeader } from "components/UI/styled/StyledHeader";
 import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
 import { SvgPlus } from "assets/svg/plus";
+import { ListSortType } from "containers/Reviews/common";
 
 const Wrapper = styled.div`
   padding: 20px;

@@ -2,13 +2,15 @@ import React from "react";
 import styled from "styled-components";
 
 import { UiInput } from "components/UI/inputs/Input";
-import { ListSortType, OnFilterSearchType } from "containers/Reviews/List";
+import { OnFilterSearchType } from "containers/Reviews/List";
 import { ratingList } from "config";
 import { SelectOptionsType, UiSelect } from "components/UI/inputs/Select";
 import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
+import { ListSortType } from "containers/Reviews/common";
 
 const sortOptions: SelectOptionsType = [
-  { value: "none", label: "Без сортировки" },
+  { value: "dateDesc", label: "Дата по убыванию" },
+  { value: "dateAsc", label: "Дата по возрастанию" },
   { value: "ratingAsc", label: "Рейтинг по возрастанию" },
   { value: "ratingDesc", label: "Рейтинг по убыванию" },
 ];

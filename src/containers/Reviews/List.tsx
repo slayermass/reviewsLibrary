@@ -7,8 +7,11 @@ import { ReviewItemModel } from "models/Review";
 import { IReviewModel } from "models/Review/interfaces";
 import { subscribeReviews } from "utils/firebase";
 import { GlobalContext } from "components/Auth/CheckRoute";
-
-export type ListSortType = "none" | "ratingAsc" | "ratingDesc";
+import {
+  comparatorAsc,
+  comparatorDesc,
+  ListSortType,
+} from "containers/Reviews/common";
 
 export type ReviewsListFilter = {
   perPage: number;
@@ -38,7 +41,7 @@ export const ReviewsList = (): React.ReactElement => {
     group: "",
     album: "",
     rating: 0,
-    sort: "none",
+    sort: "dateDesc",
   });
 
   /** сложно получилось. надо проще */
@@ -86,30 +89,19 @@ export const ReviewsList = (): React.ReactElement => {
      */
     switch (sort) {
       case "ratingAsc":
-        filteredModel = filteredModel.sort(
-          ({ rating: compLeft }, { rating: compRight }) => {
-            if (compLeft > compRight) {
-              return 1;
-            }
-            return compLeft < compRight ? -1 : 0;
-          }
-        );
+        filteredModel = comparatorAsc(filteredModel)("rating");
         break;
+
       case "ratingDesc":
-        filteredModel.sort(({ rating: compLeft }, { rating: compRight }) => {
-          if (compLeft < compRight) {
-            return 1;
-          }
-          return compLeft > compRight ? -1 : 0;
-        });
+        filteredModel = comparatorDesc(filteredModel)("rating");
         break;
+
+      case "dateAsc":
+        filteredModel = comparatorAsc(filteredModel)("date");
+        break;
+
       default:
-        filteredModel.sort(({ date: compLeft }, { date: compRight }) => {
-          if (compLeft < compRight) {
-            return 1;
-          }
-          return compLeft > compRight ? -1 : 0;
-        });
+        filteredModel = comparatorDesc(filteredModel)("date");
         break;
     }
 
