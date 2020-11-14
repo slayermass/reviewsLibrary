@@ -1,5 +1,6 @@
 import { toast } from "react-toastify";
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import debounce from "lodash/debounce";
 
 import { ReviewsListComponent } from "components/Reviews/List";
 import { defaultSizePageTable } from "config";
@@ -122,9 +123,10 @@ export const ReviewsList = (): React.ReactElement => {
 
   const onSortChange = (sort: ListSortType) => setFilter({ ...filter, sort });
 
-  const onFilterSearch: OnFilterSearchType = (name) => (value) => {
-    setFilter({ ...filter, [name]: value });
-  };
+  const onFilterSearch: OnFilterSearchType = (name) =>
+    debounce((value) => {
+      setFilter({ ...filter, [name]: value });
+    }, 300);
 
   const { isAnonymousUser, userEmail } = useContext(GlobalContext);
 
