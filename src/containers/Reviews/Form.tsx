@@ -11,7 +11,10 @@ import { GlobalContext, reviewListPath } from "components/Auth/CheckRoute";
 export const ReviewsForm = (): React.ReactElement => {
   const { id } = useParams<{ id?: string }>();
 
-  const history = useHistory();
+  const {
+    push,
+    location: { state },
+  } = useHistory<{ model?: IReviewItemModel }>();
 
   const { isAnonymousUser, userEmail } = useContext(GlobalContext);
 
@@ -20,7 +23,10 @@ export const ReviewsForm = (): React.ReactElement => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id && id.length > 0) {
+    if (state && state.model) {
+      setLoading(false);
+      setModel(state.model);
+    } else if (id && id.length > 0) {
       setLoading(true);
 
       getReviewById(id)
@@ -40,7 +46,7 @@ export const ReviewsForm = (): React.ReactElement => {
     } else {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, state]);
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -52,35 +58,20 @@ export const ReviewsForm = (): React.ReactElement => {
 
       setIsSaving(true);
 
-      /** создание */
-      if (model === null) {
-        createReview(data)
-          .then(() => {
-            toast.success("Успешно сохранено");
-            history.push(reviewListPath);
-          })
-          .catch((e) => {
-            toast.error(e);
-          })
-          .finally(() => {
-            setIsSaving(false);
-          });
-      } else if (id) {
-        updateReview(id, data)
-          .then(() => {
-            toast.success("Успешно сохранено");
-            history.push(reviewListPath);
-          })
-          .catch((e) => {
-            toast.error(e);
-          })
-          .finally(() => {
-            setIsSaving(false);
-          });
-      } else {
-        toast.error("Непредвиденная ситуация при сохранении");
-        setIsSaving(true);
-      }
+      const fnSave =
+        model && id ? () => updateReview(id, data) : () => createReview(data);
+
+      fnSave()
+        .then(() => {
+          toast.success("Успешно сохранено");
+          push(reviewListPath);
+        })
+        .catch((e) => {
+          toast.error(e);
+        })
+        .finally(() => {
+          setIsSaving(false);
+        });
     },
     [id, model]
   );

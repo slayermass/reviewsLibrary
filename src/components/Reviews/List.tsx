@@ -159,8 +159,11 @@ export const ReviewsListComponent = ({
 }: Props): React.ReactElement => {
   const history = useHistory();
 
-  const onTrClick = (id: string) => () =>
-    realUser && history.push(`${reviewFormPath}/${id}`);
+  const onTrClick = (itemModel: IReviewItemModel) => () =>
+    realUser &&
+    history.push(`${reviewFormPath}/${itemModel.id}`, {
+      model: itemModel,
+    });
 
   return (
     <>
@@ -209,7 +212,7 @@ export const ReviewsListComponent = ({
             <>
               <tbody>
                 {model.map((item: IReviewItemModel) => (
-                  <TableTR key={item.id} onClick={onTrClick(item.id)}>
+                  <TableTR key={item.id} onClick={onTrClick(item)}>
                     <TableTD>{item.group}</TableTD>
                     <TableTD>{item.album}</TableTD>
                     <TableTD>
