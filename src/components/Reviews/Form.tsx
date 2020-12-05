@@ -1,20 +1,21 @@
-import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import trim from "lodash/trim";
+import lowerCase from "lodash/lowerCase";
 
 import { UiLoaderSubmitButton } from "components/UI/buttons/LoaderButton";
 import { UiInput } from "components/UI/inputs/Input";
+import { StyledButton } from "components/UI/styled/StyledButton";
 import { StyledHeader } from "components/UI/styled/StyledHeader";
 import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
-import { StyledButton } from "components/UI/styled/StyledButton";
+import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 const Card = styled.div`
-  background: #fff;
   margin: 64px 36px;
   padding: 20px;
-  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
-  background-color: #fff;
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12);
+  background: #fff;
   border-radius: 4px;
 `;
 
@@ -92,10 +93,10 @@ export const ReviewFormComponent = ({
     }
 
     onSave({
-      group: group.toLowerCase(),
-      album: album.toLowerCase(),
-      rating,
-      comment: comment.toLowerCase(),
+      group: trim(lowerCase(group)),
+      album: trim(lowerCase(album)),
+      rating: rating > 10 ? 10 : rating,
+      comment: trim(lowerCase(comment)),
       date: getOrElse(model, "date", new Date()),
       author: userEmail || "",
     });

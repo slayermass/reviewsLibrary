@@ -156,9 +156,17 @@ export const UiInput = memo(
           maxLength={maxLength}
           onFocus={onFocus}
           onBlur={onBlur}
-          onChange={({ target: { value: inputVal } }) =>
-            setLocalValue(inputVal.replace(/\s\s+/g, " ").replace(/^\s/, ""))
-          }
+          onChange={({ target: { value: inputVal } }) => {
+            const changedValue = inputVal
+              .replace(/\s\s+/g, " ")
+              .replace(/^\s/, "");
+
+            if (type === "number" && max && +changedValue > max) {
+              setLocalValue(max.toString());
+            } else {
+              setLocalValue(changedValue);
+            }
+          }}
           value={localValue}
         />
         {showClear && (
