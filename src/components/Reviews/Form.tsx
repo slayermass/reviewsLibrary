@@ -1,14 +1,12 @@
+import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import trim from "lodash/trim";
-import lowerCase from "lodash/lowerCase";
 
 import { UiLoaderSubmitButton } from "components/UI/buttons/LoaderButton";
 import { UiInput } from "components/UI/inputs/Input";
 import { StyledButton } from "components/UI/styled/StyledButton";
 import { StyledHeader } from "components/UI/styled/StyledHeader";
 import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
-import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 
 const Card = styled.div`
   margin: 64px 36px;
@@ -44,6 +42,8 @@ const getOrElse = (
   elseValue: any
 ) =>
   obj && obj[prop] !== undefined && obj[prop] !== null ? obj[prop] : elseValue;
+
+const prepareText = (t: string): string => t.trim().toLowerCase();
 
 type Props = {
   model: IReviewItemModel | null;
@@ -93,10 +93,11 @@ export const ReviewFormComponent = ({
     }
 
     onSave({
-      group: trim(lowerCase(group)),
-      album: trim(lowerCase(album)),
-      rating: rating > 10 ? 10 : rating,
-      comment: trim(lowerCase(comment)),
+      group: prepareText(group),
+      album: prepareText(album),
+      // eslint-disable-next-line no-nested-ternary
+      rating: rating > 10 ? 10 : (rating < 1 ? 1 : rating),
+      comment: prepareText(comment),
       date: getOrElse(model, "date", new Date()),
       author: userEmail || "",
     });
