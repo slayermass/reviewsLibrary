@@ -14,17 +14,27 @@ import {
   ListSortType,
 } from "containers/Reviews/common";
 
+const searchInModel = (
+  filteredModel: IReviewModel
+) => (
+  prop: "group" | "album" | "comment",
+  value: string
+) => filteredModel.filter((item) =>
+  item[prop].toLowerCase().includes(value)
+)
+
 export type ReviewsListFilter = {
   perPage: number;
   page: number;
   group: string;
   album: string;
+  comment: string;
   rating: number;
   sort: ListSortType;
 };
 
 export type OnFilterSearchType = (
-  name: "group" | "album" | "rating"
+  name: "group" | "album" | "rating" | "comment"
 ) => (value: string | number) => void;
 
 export const ReviewsList = (): React.ReactElement => {
@@ -34,13 +44,14 @@ export const ReviewsList = (): React.ReactElement => {
   const [modelToRender, setModalToRender] = useState<{
     data: IReviewModel;
     amount: number;
-  }>({ data: [], amount: 0 });
+  }>({data: [], amount: 0});
 
   const [filter, setFilter] = useState<ReviewsListFilter>({
     perPage: defaultSizePageTable,
     page: 1,
     group: "",
     album: "",
+    comment: "",
     rating: 0,
     sort: "dateDesc",
   });
@@ -54,25 +65,20 @@ export const ReviewsList = (): React.ReactElement => {
     let total = modelToFilter.length;
     let searched = false;
 
-    const { album, group, rating, sort } = filter;
+    const {album, group, rating, sort, comment} = filter;
 
     /** фильтровать по всем записям */
-    if (album.length || group.length || rating > 0) {
+    if (album.length || group.length || comment.length || rating > 0) {
       filteredModel = modelToFilter;
 
       if (album.length) {
-        const lowerAlbum = album.toLowerCase();
-
-        filteredModel = filteredModel.filter((item) =>
-          item.album.toLowerCase().includes(lowerAlbum)
-        );
+        filteredModel = searchInModel(filteredModel)('album', album)
       }
       if (group.length) {
-        const lowerGroup = group.toLowerCase();
-
-        filteredModel = filteredModel.filter((item) =>
-          item.group.toLowerCase().includes(lowerGroup)
-        );
+        filteredModel = searchInModel(filteredModel)('group', group)
+      }
+      if (comment.length) {
+        filteredModel = searchInModel(filteredModel)('comment', comment)
       }
       if (rating > 0) {
         filteredModel = filteredModel.filter((item) => item.rating === rating);
@@ -112,23 +118,23 @@ export const ReviewsList = (): React.ReactElement => {
       filter.page * filter.perPage
     );
 
-    setModalToRender({ data: filteredModel, amount: total });
+    setModalToRender({data: filteredModel, amount: total});
   }, [filter, model]);
 
   const onSizePageChange = (perPage: number) => {
-    setFilter({ ...filter, perPage, page: 1 });
+    setFilter({...filter, perPage, page: 1});
   };
 
-  const onPageChange = (page: number) => setFilter({ ...filter, page });
+  const onPageChange = (page: number) => setFilter({...filter, page});
 
-  const onSortChange = (sort: ListSortType) => setFilter({ ...filter, sort });
+  const onSortChange = (sort: ListSortType) => setFilter({...filter, sort});
 
   const onFilterSearch: OnFilterSearchType = (name) =>
     debounce((value) => {
-      setFilter({ ...filter, [name]: value });
+      setFilter({...filter, [name]: value});
     }, 300);
 
-  const { isAnonymousUser, userEmail } = useContext(GlobalContext);
+  const {isAnonymousUser, userEmail} = useContext(GlobalContext);
 
   useEffect(() => {
     if (userEmail === null) {
@@ -146,7 +152,7 @@ export const ReviewsList = (): React.ReactElement => {
         setLoading(true);
 
         const resModel = response.docs.map(
-          (i: any) => new ReviewItemModel({ id: i.id, ...i.data() })
+          (i: any) => new ReviewItemModel({id: i.id, ...i.data()})
         );
         setModel(resModel);
 

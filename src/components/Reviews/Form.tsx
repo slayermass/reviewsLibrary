@@ -7,6 +7,7 @@ import { UiInput } from "components/UI/inputs/Input";
 import { StyledButton } from "components/UI/styled/StyledButton";
 import { StyledHeader } from "components/UI/styled/StyledHeader";
 import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
+import { prepareText } from "utils/prepareText";
 
 const Card = styled.div`
   margin: 64px 36px;
@@ -42,8 +43,6 @@ const getOrElse = (
   elseValue: any
 ) =>
   obj && obj[prop] !== undefined && obj[prop] !== null ? obj[prop] : elseValue;
-
-const prepareText = (t: string): string => t.trim().toLowerCase();
 
 type Props = {
   model: IReviewItemModel | null;

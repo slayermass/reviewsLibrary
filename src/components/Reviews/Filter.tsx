@@ -7,6 +7,7 @@ import { ratingList } from "config";
 import { SelectOptionsType, UiSelect } from "components/UI/inputs/Select";
 import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
 import { ListSortType } from "containers/Reviews/common";
+import { prepareText } from 'utils/prepareText';
 
 const sortOptions: SelectOptionsType = [
   { value: "dateDesc", label: "Дата по убыванию" },
@@ -43,7 +44,7 @@ export const ReviewsFilter = ({
     <StyledCol>
       <UiInput
         label="Группа"
-        onChange={onFilterSearch("group")}
+        onChange={(v) => onFilterSearch("group")(prepareText(v))}
         showClear
         maxLength={100}
       />
@@ -51,7 +52,15 @@ export const ReviewsFilter = ({
     <StyledCol>
       <UiInput
         label="Альбом"
-        onChange={onFilterSearch("album")}
+        onChange={(v) => onFilterSearch("album")(prepareText(v))}
+        showClear
+        maxLength={100}
+      />
+    </StyledCol>
+    <StyledCol>
+      <UiInput
+        label="Комментарий"
+        onChange={(v) => onFilterSearch("comment")(prepareText(v))}
         showClear
         maxLength={100}
       />
