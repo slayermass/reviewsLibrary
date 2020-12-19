@@ -6,22 +6,18 @@ import { ReviewsListComponent } from "components/Reviews/List";
 import { defaultSizePageTable } from "config";
 import { ReviewItemModel } from "models/Review";
 import { IReviewModel } from "models/Review/interfaces";
-import { subscribeReviews } from "utils/firebase";
 import { GlobalContext } from "components/Auth/CheckRoute";
 import {
   comparatorAsc,
   comparatorDesc,
   ListSortType,
 } from "containers/Reviews/common";
+import { API } from "utils/apiDriver";
 
-const searchInModel = (
-  filteredModel: IReviewModel
-) => (
+const searchInModel = (filteredModel: IReviewModel) => (
   prop: "group" | "album" | "comment",
   value: string
-) => filteredModel.filter((item) =>
-  item[prop].toLowerCase().includes(value)
-)
+) => filteredModel.filter((item) => item[prop].toLowerCase().includes(value));
 
 export type ReviewsListFilter = {
   perPage: number;
@@ -44,7 +40,7 @@ export const ReviewsList = (): React.ReactElement => {
   const [modelToRender, setModalToRender] = useState<{
     data: IReviewModel;
     amount: number;
-  }>({data: [], amount: 0});
+  }>({ data: [], amount: 0 });
 
   const [filter, setFilter] = useState<ReviewsListFilter>({
     perPage: defaultSizePageTable,
@@ -65,20 +61,20 @@ export const ReviewsList = (): React.ReactElement => {
     let total = modelToFilter.length;
     let searched = false;
 
-    const {album, group, rating, sort, comment} = filter;
+    const { album, group, rating, sort, comment } = filter;
 
     /** фильтровать по всем записям */
     if (album.length || group.length || comment.length || rating > 0) {
       filteredModel = modelToFilter;
 
       if (album.length) {
-        filteredModel = searchInModel(filteredModel)('album', album)
+        filteredModel = searchInModel(filteredModel)("album", album);
       }
       if (group.length) {
-        filteredModel = searchInModel(filteredModel)('group', group)
+        filteredModel = searchInModel(filteredModel)("group", group);
       }
       if (comment.length) {
-        filteredModel = searchInModel(filteredModel)('comment', comment)
+        filteredModel = searchInModel(filteredModel)("comment", comment);
       }
       if (rating > 0) {
         filteredModel = filteredModel.filter((item) => item.rating === rating);
@@ -118,23 +114,23 @@ export const ReviewsList = (): React.ReactElement => {
       filter.page * filter.perPage
     );
 
-    setModalToRender({data: filteredModel, amount: total});
+    setModalToRender({ data: filteredModel, amount: total });
   }, [filter, model]);
 
   const onSizePageChange = (perPage: number) => {
-    setFilter({...filter, perPage, page: 1});
+    setFilter({ ...filter, perPage, page: 1 });
   };
 
-  const onPageChange = (page: number) => setFilter({...filter, page});
+  const onPageChange = (page: number) => setFilter({ ...filter, page });
 
-  const onSortChange = (sort: ListSortType) => setFilter({...filter, sort});
+  const onSortChange = (sort: ListSortType) => setFilter({ ...filter, sort });
 
   const onFilterSearch: OnFilterSearchType = (name) =>
     debounce((value) => {
-      setFilter({...filter, [name]: value});
+      setFilter({ ...filter, [name]: value });
     }, 300);
 
-  const {isAnonymousUser, userEmail} = useContext(GlobalContext);
+  const { isAnonymousUser, userEmail } = useContext(GlobalContext);
 
   useEffect(() => {
     if (userEmail === null) {
@@ -146,13 +142,13 @@ export const ReviewsList = (): React.ReactElement => {
     //   .finally(() => {
     //     setLoading(false);
     //   });
-    subscribeReviews(userEmail).onSnapshot(
+    API.subscribe(userEmail).onSnapshot(
       /** type? */
       (response: any) => {
         setLoading(true);
 
         const resModel = response.docs.map(
-          (i: any) => new ReviewItemModel({id: i.id, ...i.data()})
+          (i: any) => new ReviewItemModel({ id: i.id, ...i.data() })
         );
         setModel(resModel);
 

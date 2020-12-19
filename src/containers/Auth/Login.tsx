@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { LoginForm } from "components/Auth/LoginForm";
-import { login } from "utils/firebase";
+import { API } from "utils/apiDriver";
 
 let mount = false;
 
@@ -22,7 +22,7 @@ export const LoginPage = (): React.ReactElement => {
   const onLogin = (email: string, password: string) => {
     setLoading(true);
 
-    login(email, password)
+    API.login(email, password)
       .then(() => {
         history.push("/");
       })

@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { API } from "utils/apiDriver";
 
-import { createReview, getReviewById, updateReview } from "utils/firebase";
 import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
 import { UiGlobalLoader } from "components/UI/Loaders";
 import { ReviewFormComponent } from "components/Reviews/Form";
@@ -29,7 +29,7 @@ export const ReviewsForm = (): React.ReactElement => {
     } else if (id && id.length > 0) {
       setLoading(true);
 
-      getReviewById(id)
+      API.getReviewById(id)
         .then((responseModel: IReviewItemModel | null) => {
           if (responseModel) {
             setCreateMode(false);
@@ -59,7 +59,9 @@ export const ReviewsForm = (): React.ReactElement => {
       setIsSaving(true);
 
       const fnSave =
-        model && id ? () => updateReview(id, data) : () => createReview(data);
+        model && id
+          ? () => API.updateReview(id, data)
+          : () => API.createReview(data);
 
       fnSave()
         .then(() => {
