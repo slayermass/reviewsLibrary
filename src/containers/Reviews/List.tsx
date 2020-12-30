@@ -117,18 +117,16 @@ export const ReviewsList = (): React.ReactElement => {
     setModalToRender({ data: filteredModel, amount: total });
   }, [filter, model]);
 
-  const onSizePageChange = (perPage: number) => {
-    setFilter({ ...filter, perPage, page: 1 });
-  };
+  /** изменение фильтра */
+  const changeFilterProp = (prop: keyof ReviewsListFilter, obj?: any) => (
+    value: string | number
+  ) => setFilter({ ...filter, ...(obj || {}), [prop]: value });
 
-  const onPageChange = (page: number) => setFilter({ ...filter, page });
-
-  const onSortChange = (sort: ListSortType) => setFilter({ ...filter, sort });
-
+  const onSizePageChange = changeFilterProp("perPage", { page: 1 });
+  const onPageChange = changeFilterProp("page");
+  const onSortChange = changeFilterProp("sort");
   const onFilterSearch: OnFilterSearchType = (name) =>
-    debounce((value) => {
-      setFilter({ ...filter, [name]: value });
-    }, 300);
+    debounce(changeFilterProp(name, { page: 1 }), 300);
 
   const { isAnonymousUser, userEmail } = useContext(GlobalContext);
 

@@ -1,25 +1,25 @@
 import React from "react";
-import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
+import styled from "styled-components";
 
-import { UiPagination } from "components/UI/Pagination";
-import { IReviewItemModel, IReviewModel } from "models/Review/interfaces";
-import { CDate } from "utils/CDate";
+import { SvgPlus } from "assets/svg/plus";
+import { reviewFormPath } from "components/Auth/CheckRoute";
 import { ReviewsFilter } from "components/Reviews/Filter";
 import { UiLoader } from "components/UI/Loaders";
+import { UiPagination } from "components/UI/Pagination";
 import { UiStarsBlock } from "components/UI/StarsBlock";
-import { OnFilterSearchType } from "containers/Reviews/List";
-import { reviewFormPath } from "components/Auth/CheckRoute";
 import { StyledPrimaryButton } from "components/UI/styled/StyledButton";
-import { StyledHeader } from "components/UI/styled/StyledHeader";
 import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
-import { SvgPlus } from "assets/svg/plus";
+import { StyledHeader } from "components/UI/styled/StyledHeader";
 import { ListSortType } from "containers/Reviews/common";
+import { OnFilterSearchType } from "containers/Reviews/List";
+import { IReviewItemModel, IReviewModel } from "models/Review/interfaces";
+import { CDate } from "utils/CDate";
 
 const Wrapper = styled.div`
   padding: 20px;
-  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2),
+    0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
   background-color: #fff;
   border-radius: 4px;
   margin: 64px 36px;

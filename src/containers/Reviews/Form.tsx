@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { API } from "utils/apiDriver";
 
+import { API } from "utils/apiDriver";
 import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
 import { UiGlobalLoader } from "components/UI/Loaders";
 import { ReviewFormComponent } from "components/Reviews/Form";
@@ -23,29 +23,28 @@ export const ReviewsForm = (): React.ReactElement => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (state && state.model) {
-      setLoading(false);
-      setModel(state.model);
-    } else if (id && id.length > 0) {
-      setLoading(true);
-
-      API.getReviewById(id)
-        .then((responseModel: IReviewItemModel | null) => {
-          if (responseModel) {
-            setCreateMode(false);
-          }
-          setModel(responseModel);
-        })
-        .catch((err) => {
-          toast.error(err);
-          setLoading(false);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+    new Promise((resolve) => {
+      if (state && state.model) {
+        setLoading(false);
+        setModel(state.model);
+      } else if (id && id.length > 0) {
+        setLoading(true);
+        resolve(id);
+      } else {
+        setLoading(false);
+      }
+    })
+      .then((modelId: any) => API.getReviewById(modelId))
+      .then((responseModel: IReviewItemModel | null) => {
+        if (responseModel) {
+          setCreateMode(false);
+        }
+        setModel(responseModel);
+      })
+      .catch(toast.error)
+      .finally(() => {
+        setLoading(false);
+      });
   }, [id, state]);
 
   const [isSaving, setIsSaving] = useState(false);
@@ -56,21 +55,20 @@ export const ReviewsForm = (): React.ReactElement => {
         return;
       }
 
-      setIsSaving(true);
+      new Promise((resolve) => {
+        setIsSaving(true);
 
-      const fnSave =
-        model && id
-          ? () => API.updateReview(id, data)
-          : () => API.createReview(data);
-
-      fnSave()
+        resolve(
+          model && id
+            ? () => API.updateReview(id, data)
+            : () => API.createReview(data)
+        );
+      })
         .then(() => {
           toast.success("Успешно сохранено");
           push(reviewListPath);
         })
-        .catch((e) => {
-          toast.error(e);
-        })
+        .catch(toast.error)
         .finally(() => {
           setIsSaving(false);
         });
@@ -78,10 +76,9 @@ export const ReviewsForm = (): React.ReactElement => {
     [id, model]
   );
 
-  if (loading) {
-    return <UiGlobalLoader />;
-  }
-  return (
+  return loading ? (
+    <UiGlobalLoader />
+  ) : (
     <ReviewFormComponent
       model={model}
       onSave={onSave}
