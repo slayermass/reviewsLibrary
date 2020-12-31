@@ -58,20 +58,20 @@ export const ReviewsForm = (): React.ReactElement => {
       new Promise((resolve) => {
         setIsSaving(true);
 
-        resolve(
-          model && id
-            ? () => API.updateReview(id, data)
-            : () => API.createReview(data)
-        );
+        if (model === null) {
+          resolve(API.createReview(data));
+        } else if (id) {
+          resolve(API.updateReview(id, data));
+        } else {
+          toast.error("Непредвиденная ситуация при сохранении");
+          setIsSaving(false);
+        }
       })
         .then(() => {
           toast.success("Успешно сохранено");
           push(reviewListPath);
         })
-        .catch(toast.error)
-        .finally(() => {
-          setIsSaving(false);
-        });
+        .catch(toast.error);
     },
     [id, model]
   );
