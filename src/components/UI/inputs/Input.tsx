@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useState } from "react";
 import styled from "styled-components";
 
 import { SvgRemove } from "assets/svg/remove";
@@ -104,8 +104,8 @@ const ClearButton = styled.button`
 type Props = {
   label: string;
   onChange: (v: any) => void;
+  value: string | number;
 
-  value?: string | number;
   type?: "text" | "number";
   showClear?: boolean;
   min?: number;
@@ -124,24 +124,16 @@ export const UiInput = memo(
     value,
     maxLength,
   }: Props): React.ReactElement => {
-    const [localValue, setLocalValue] = useState<string>(
-      value ? value.toString() : ""
-    );
-
     const id = Math.random().toString();
-
-    useEffect(() => {
-      onChange(type === "number" ? +localValue : localValue);
-    }, [localValue]);
 
     const [focus, setFocus] = useState(false);
     const onFocus = () => setFocus(true);
     const onBlur = () => setFocus(false);
     const onClear = () => {
-      setLocalValue("");
+      onChange("");
     };
 
-    const isActive = focus || localValue.length > 0;
+    const isActive = focus || value.toString().length > 0;
 
     return (
       <Wrapper active={isActive}>
@@ -162,12 +154,12 @@ export const UiInput = memo(
               .replace(/^\s/, "");
 
             if (type === "number" && max && +changedValue > max) {
-              setLocalValue(max.toString());
+              onChange(max);
             } else {
-              setLocalValue(changedValue);
+              onChange(changedValue);
             }
           }}
-          value={localValue}
+          value={value}
         />
         {showClear && (
           <ClearButton onClick={onClear}>

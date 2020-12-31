@@ -1,5 +1,4 @@
 import { IReviewItemModel } from "models/Review/interfaces";
-import { CDate } from "utils/CDate";
 
 export class ReviewItemModel implements IReviewItemModel {
   readonly album: string;
@@ -11,12 +10,13 @@ export class ReviewItemModel implements IReviewItemModel {
   readonly author: string;
 
   constructor(params: any = {}) {
-    this.album = params.album;
-    this.comment = params.comment;
-    this.date = CDate.fromUnixTime(params.date.seconds);
-    this.group = params.group;
-    this.id = params.id;
-    this.rating = params.rating;
-    this.author = params.author;
+    this.album = params.a;
+    this.comment = params.c;
+    this.date = new Date(params.d);
+    this.group = params.g;
+    // eslint-disable-next-line no-underscore-dangle
+    this.id = params._id;
+    this.rating = params.r;
+    this.author = params.u;
   }
 }

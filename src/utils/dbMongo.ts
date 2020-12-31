@@ -1,46 +1,46 @@
-/* eslint-disable */
-import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
-import { DbBaseInterface } from "utils/dbBaseInterface";
+/* eslint-disable  */
+import { ReviewItemModel } from "models/Review";
+import {
+  IReviewForm,
+  IReviewItemModel,
+  IReviewModel,
+  ReviewItemResponse,
+  ReviewListFilterType,
+} from "models/Review/interfaces";
+import { APIBaseInterface } from "utils/dbBaseInterface";
+import { httpGet, httpPost, httpPut } from "utils/http";
 
-export class DbMongo extends DbBaseInterface {
-  constructor() {
-    super();
-
-    this.db = "todo";
+export class DbMongo extends APIBaseInterface {
+  checkAuth() {
+    return httpGet("/me");
   }
 
-  // eslint-disable-next-line class-methods-use-this
   getReviewById(id: string): Promise<IReviewItemModel | null> {
-    return new Promise((resolve) => {
-      resolve({
-        album: "test album",
-        comment: "test comment",
-        date: new Date(),
-        group: "test group",
-        id: "6666666666666",
-        rating: 1,
-        author: "test author",
-      });
-    });
+    return httpGet(`/review/${id}`).then(
+      (response) => new ReviewItemModel(response)
+    );
   }
 
-  // eslint-disable-next-line class-methods-use-this
   login(email: string, password: string): Promise<unknown> {
-    return Promise.resolve(undefined);
+    return httpPost("/login", { email, password });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   subscribe(email: string) {
     throw new Error("no such method");
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  createReview(model: IReviewForm): Promise<void> {
-    return Promise.resolve(undefined);
+  createReview(model: IReviewForm): Promise<{ id: string }> {
+    return httpPost("/review", model);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  updateReview(id: string, model: IReviewForm): Promise<void> {
-    return Promise.resolve(undefined);
+  updateReview(id: string, model: IReviewForm): Promise<IReviewItemModel> {
+    return httpPut(`/review/${id}`, model);
+  }
+
+  getList(filter?: ReviewListFilterType): Promise<IReviewModel> {
+    return httpGet<ReviewItemResponse>("/reviews", filter).then((response) => ({
+      data: response.data.map((item) => new ReviewItemModel(item)),
+      amount: response.amount,
+    }));
   }
 }

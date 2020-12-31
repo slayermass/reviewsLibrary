@@ -2,12 +2,12 @@ import React from "react";
 import styled from "styled-components";
 
 import { UiInput } from "components/UI/inputs/Input";
-import { OnFilterSearchType } from "containers/Reviews/List";
+import { OnFilterSearchType, ReviewsListFilter } from "containers/Reviews/List";
 import { ratingList } from "config";
 import { SelectOptionsType, UiSelect } from "components/UI/inputs/Select";
 import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
 import { ListSortType } from "containers/Reviews/common";
-import { prepareText } from 'utils/prepareText';
+import { prepareText } from "utils/prepareText";
 
 const sortOptions: SelectOptionsType = [
   { value: "dateDesc", label: "Дата по убыванию" },
@@ -34,15 +34,18 @@ const DoubleCol = styled(StyledCol)`
 type Props = {
   onFilterSearch: OnFilterSearchType;
   onSortChange: (sort: ListSortType) => void;
+  values: ReviewsListFilter;
 };
 
 export const ReviewsFilter = ({
   onFilterSearch,
   onSortChange,
+  values,
 }: Props): React.ReactElement => (
   <Wrapper>
     <StyledCol>
       <UiInput
+        value={values.group}
         label="Группа"
         onChange={(v) => onFilterSearch("group")(prepareText(v))}
         showClear
@@ -51,6 +54,7 @@ export const ReviewsFilter = ({
     </StyledCol>
     <StyledCol>
       <UiInput
+        value={values.album}
         label="Альбом"
         onChange={(v) => onFilterSearch("album")(prepareText(v))}
         showClear
@@ -59,6 +63,7 @@ export const ReviewsFilter = ({
     </StyledCol>
     <StyledCol>
       <UiInput
+        value={values.comment}
         label="Комментарий"
         onChange={(v) => onFilterSearch("comment")(prepareText(v))}
         showClear

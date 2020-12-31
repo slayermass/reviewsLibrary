@@ -26,9 +26,7 @@ export const LoginPage = (): React.ReactElement => {
       .then(() => {
         history.push("/");
       })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err.message);
+      .catch(() => {
         toast.error(
           `Ошибка авторизации: пользователь не найден или не существует`
         );
@@ -39,25 +37,6 @@ export const LoginPage = (): React.ReactElement => {
         }
       });
   };
-
-  // const onAnonimLogin = useCallback(() => {
-  //   setLoading(true);
-  //
-  //   loginAnonymously()
-  //     .then(() => {
-  //       history.push("/");
-  //     })
-  //     .catch((err) => {
-  //       // eslint-disable-next-line no-console
-  //       console.error(err.message);
-  //       toast.error(`Ошибка анонимной авторизации`);
-  //     })
-  //     .finally(() => {
-  //       if (mount) {
-  //         setLoading(false);
-  //       }
-  //     });
-  // }, []);
 
   return <LoginForm onLogin={onLogin} loading={loading} />;
 };

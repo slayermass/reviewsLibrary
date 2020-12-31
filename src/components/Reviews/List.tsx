@@ -12,14 +12,14 @@ import { StyledPrimaryButton } from "components/UI/styled/StyledButton";
 import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
 import { StyledHeader } from "components/UI/styled/StyledHeader";
 import { ListSortType } from "containers/Reviews/common";
-import { OnFilterSearchType } from "containers/Reviews/List";
+import { OnFilterSearchType, ReviewsListFilter } from "containers/Reviews/List";
 import { IReviewItemModel, IReviewModel } from "models/Review/interfaces";
 import { CDate } from "utils/CDate";
 
 const Wrapper = styled.div`
   padding: 20px;
-  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2),
-    0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12);
   background-color: #fff;
   border-radius: 4px;
   margin: 64px 36px;
@@ -137,11 +137,11 @@ type Props = {
   onSortChange: (sort: ListSortType) => void;
   page: number;
   perPage: number;
-  totalAmount: number;
   loading: boolean;
   onFilterSearch: OnFilterSearchType;
   realUser: boolean; // реальный ли пользователь ( не аноним )
   userEmail: string | null;
+  filter: ReviewsListFilter;
 };
 
 export const ReviewsListComponent = ({
@@ -151,11 +151,11 @@ export const ReviewsListComponent = ({
   onSortChange,
   page,
   perPage,
-  totalAmount,
   loading,
   onFilterSearch,
   realUser,
   userEmail,
+  filter,
 }: Props): React.ReactElement => {
   const history = useHistory();
 
@@ -174,6 +174,7 @@ export const ReviewsListComponent = ({
         <ReviewsFilter
           onFilterSearch={onFilterSearch}
           onSortChange={onSortChange}
+          values={filter}
         />
         {realUser && (
           <RowCreate>
@@ -211,7 +212,7 @@ export const ReviewsListComponent = ({
           {!loading && (
             <>
               <tbody>
-                {model.map((item: IReviewItemModel) => (
+                {model.data.map((item: IReviewItemModel) => (
                   <TableTR key={item.id} onClick={onTrClick(item)}>
                     <TableTD>{item.group}</TableTD>
                     <TableTD>{item.album}</TableTD>
@@ -229,7 +230,7 @@ export const ReviewsListComponent = ({
                 <TableTR>
                   <TableTD colSpan={10}>
                     <UiPagination
-                      total={totalAmount}
+                      total={model.amount}
                       onPageChange={onPageChange}
                       onSizePageChange={onSizePageChange}
                       page={page}

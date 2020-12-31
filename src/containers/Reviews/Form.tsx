@@ -52,6 +52,7 @@ export const ReviewsForm = (): React.ReactElement => {
   const onSave = useCallback(
     (data: IReviewForm) => {
       if (isAnonymousUser) {
+        toast.error("Недоступно для анонимных пользователей");
         return;
       }
 

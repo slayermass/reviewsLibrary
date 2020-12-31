@@ -1,10 +1,10 @@
-import app from "firebase";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory } from "react-router-dom";
 
 import { LoginPage } from "containers/Auth/Login";
 import { UiGlobalLoader } from "components/UI/Loaders";
 import { InnerRoutes } from "components/InnerRoutes";
+import { API } from "utils/apiDriver";
 
 export const reviewListPath = "/";
 export const reviewFormPath = "/review-form";
@@ -21,21 +21,18 @@ export const CheckRoute = (): React.ReactElement => {
   const history = useHistory();
   const [loadUser, setLoadUser] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [isAnonymousUser, setIsAnonymousUser] = useState(true);
+  const [isAnonymousUser] = useState(false);
 
   /** проверить авторизованность пользователя */
   useEffect(() => {
-    app.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setUserEmail(user.email);
-
-        if (!user.isAnonymous) {
-          setIsAnonymousUser(false);
-        }
-      }
-
-      setLoadUser(false);
-    });
+    API.checkAuth()
+      .then((response) => {
+        setUserEmail(response.email);
+        setLoadUser(false);
+      })
+      .catch(() => {
+        setLoadUser(false);
+      });
   }, [history]);
 
   useEffect(() => {

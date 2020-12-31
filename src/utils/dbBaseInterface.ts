@@ -1,10 +1,15 @@
-import { IReviewForm, IReviewItemModel } from "models/Review/interfaces";
+import {
+  IReviewForm,
+  IReviewItemModel,
+  ReviewListFilterType,
+} from "models/Review/interfaces";
 
-export abstract class DbBaseInterface {
-  db: any;
-
+export abstract class APIBaseInterface {
   /** авторизация. логин */
   abstract login(email: string, password: string): Promise<unknown>;
+
+  /** проверка авторизованности */
+  abstract checkAuth(): Promise<any>;
 
   /** обзоры. данные одного обзора */
   abstract getReviewById(id: string): Promise<IReviewItemModel | null>;
@@ -13,8 +18,11 @@ export abstract class DbBaseInterface {
   abstract subscribe(email: string): any;
 
   /** обзоры. создание */
-  abstract createReview(model: IReviewForm): Promise<void>;
+  abstract createReview(model: IReviewForm): Promise<any>;
 
   /** обзоры. обновление */
-  abstract updateReview(id: string, model: IReviewForm): Promise<void>;
+  abstract updateReview(id: string, model: IReviewForm): Promise<any>;
+
+  /** обзоры. список */
+  abstract getList(filter: ReviewListFilterType): Promise<any>;
 }

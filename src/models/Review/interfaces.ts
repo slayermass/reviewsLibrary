@@ -8,7 +8,20 @@ export interface IReviewItemModel {
   readonly author: string; // почта пользователя
 }
 
-export type IReviewModel = IReviewItemModel[];
+export type ReviewItemResponse = {
+  data: {
+    readonly a: string;
+    readonly c: string;
+    readonly d: Date;
+    readonly g: string;
+    readonly _id: string;
+    readonly r: number;
+    readonly u: string;
+  }[];
+  amount: number;
+};
+
+export type IReviewModel = { data: IReviewItemModel[]; amount: number };
 
 export type IReviewForm = {
   readonly group: string;
@@ -18,3 +31,5 @@ export type IReviewForm = {
   readonly date: Date;
   readonly author: string;
 };
+
+export type ReviewListFilterType = { perPage: number; page: number };
