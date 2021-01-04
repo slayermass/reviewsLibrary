@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useMemo, useState } from "react";
 import styled from "styled-components";
 
 import { SvgRemove } from "assets/svg/remove";
@@ -124,16 +124,21 @@ export const UiInput = memo(
     value,
     maxLength,
   }: Props): React.ReactElement => {
-    const id = Math.random().toString();
+    const id = useMemo(() => Math.random().toString(), []);
+
+    const [localValue, setLocalValue] = useState<string>(() =>
+      value.toString()
+    );
 
     const [focus, setFocus] = useState(false);
     const onFocus = () => setFocus(true);
     const onBlur = () => setFocus(false);
     const onClear = () => {
       onChange("");
+      setLocalValue("");
     };
 
-    const isActive = focus || value.toString().length > 0;
+    const isActive = focus || localValue.toString().length > 0;
 
     return (
       <Wrapper active={isActive}>
@@ -155,11 +160,13 @@ export const UiInput = memo(
 
             if (type === "number" && max && +changedValue > max) {
               onChange(max);
+              setLocalValue(max.toString());
             } else {
               onChange(changedValue);
+              setLocalValue(changedValue);
             }
           }}
-          value={value}
+          value={localValue}
         />
         {showClear && (
           <ClearButton onClick={onClear}>

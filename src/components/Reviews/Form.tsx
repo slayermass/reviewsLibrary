@@ -87,19 +87,19 @@ export const ReviewFormComponent = ({
   const onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!canSave) {
-      return;
-    }
+    if (canSave) {
+      const numberRating = +rating;
 
-    onSave({
-      group: prepareText(group),
-      album: prepareText(album),
-      // eslint-disable-next-line no-nested-ternary
-      rating: rating > 10 ? 10 : (rating < 1 ? 1 : rating),
-      comment: prepareText(comment),
-      date: getOrElse(model, "date", new Date()),
-      author: userEmail || "",
-    });
+      onSave({
+        group: prepareText(group),
+        album: prepareText(album),
+        // eslint-disable-next-line no-nested-ternary
+        rating: numberRating > 10 ? 10 : numberRating < 1 ? 1 : numberRating,
+        comment: prepareText(comment),
+        date: getOrElse(model, "date", new Date()),
+        author: userEmail || "",
+      });
+    }
   };
 
   return (

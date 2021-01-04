@@ -60,28 +60,34 @@ export const ReviewsList = (): React.ReactElement => {
   const onSizePageChange = changeFilterProp("perPage", { page: 1 });
   const onPageChange = changeFilterProp("page");
   const onSortChange = changeFilterProp("sort");
-  const onFilterSearch: OnFilterSearchType = (name) =>
-    changeFilterProp(name, { page: 1 });
+
+  const onFilterSearchDebounced = useRef(
+    debounce((name, value) => {
+      // TODO при смене ввода инпутов, теряется предыдущий ввод
+      // setFilter({ ...filter, [name]: value });
+      changeFilterProp(name)(value);
+    }, 500)
+  );
+
+  const onFilterSearch: OnFilterSearchType = (name) => (value) => {
+    onFilterSearchDebounced.current(name, value);
+  };
 
   const { isAnonymousUser, userEmail } = useContext(GlobalContext);
 
-  useEffect(() => onFilterChangedDebounce.current(filter), [filter]);
-
   /** обращение к апи с фильтрами */
-  const onFilterChangedDebounce = useRef(
-    debounce((filterToSearch) => {
-      setLoading(true);
+  useEffect(() => {
+    setLoading(true);
 
-      API.getList(cleanupFilter(filterToSearch) as ReviewListFilterType)
-        .then(setModel)
-        .catch((e) => {
-          toast.error(e.toString());
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }, 500)
-  );
+    API.getList(cleanupFilter(filter) as ReviewListFilterType)
+      .then(setModel)
+      .catch((e) => {
+        toast.error(e.toString());
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [filter]);
 
   return (
     <ReviewsListComponent
