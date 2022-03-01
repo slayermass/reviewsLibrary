@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Route, Switch, useHistory } from "react-router-dom";
 
 import { LoginPage } from "containers/Auth/Login";
@@ -12,9 +12,11 @@ export const reviewFormPath = "/review-form";
 export const GlobalContext = React.createContext<{
   isAnonymousUser: boolean;
   userEmail: string | null; // string всегда, иначе зайти не получится
+  setUserEmail: Dispatch<SetStateAction<string | null>>;
 }>({
   isAnonymousUser: true,
   userEmail: null,
+  setUserEmail: () => null
 });
 
 export const CheckRoute = (): React.ReactElement => {
@@ -22,6 +24,7 @@ export const CheckRoute = (): React.ReactElement => {
   const [loadUser, setLoadUser] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isAnonymousUser] = useState(false);
+
 
   /** проверить авторизованность пользователя */
   useEffect(() => {
@@ -36,7 +39,7 @@ export const CheckRoute = (): React.ReactElement => {
   }, [history]);
 
   useEffect(() => {
-    const { pathname } = history.location;
+    const {pathname} = history.location;
 
     /** защита роутов от неавторизованных */
     if (!loadUser && userEmail === null && pathname !== "/login") {
@@ -59,11 +62,12 @@ export const CheckRoute = (): React.ReactElement => {
   }
   return (
     <Switch>
-      <Route path="/login">
-        <LoginPage />
-      </Route>
+      <GlobalContext.Provider value={{isAnonymousUser, userEmail, setUserEmail}}>
 
-      <GlobalContext.Provider value={{ isAnonymousUser, userEmail }}>
+        <Route path="/login">
+          <LoginPage />
+        </Route>
+
         <InnerRoutes isAuth={userEmail !== null} />
       </GlobalContext.Provider>
     </Switch>

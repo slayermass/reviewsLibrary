@@ -89,6 +89,7 @@ export const ReviewsList = (): React.ReactElement => {
       });
   }, [filter]);
 
+
   return (
     <ReviewsListComponent
       model={model}
