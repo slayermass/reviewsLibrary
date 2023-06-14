@@ -9,14 +9,14 @@ import { ReviewFormComponent } from "components/Reviews/Form";
 import { GlobalContext, reviewListPath } from "components/Auth/CheckRoute";
 
 export const ReviewsForm = (): React.ReactElement => {
-  const { id } = useParams<{ id?: string }>();
+  const {id} = useParams<{ id?: string }>();
 
   const {
     push,
-    location: { state },
+    location: {state},
   } = useHistory<{ model?: IReviewItemModel }>();
 
-  const { isAnonymousUser, userEmail } = useContext(GlobalContext);
+  const {isAnonymousUser, userEmail} = useContext(GlobalContext);
 
   const [, setCreateMode] = useState(true);
   const [model, setModel] = useState<IReviewItemModel | null>(null);
@@ -49,6 +49,12 @@ export const ReviewsForm = (): React.ReactElement => {
 
   const [isSaving, setIsSaving] = useState(false);
 
+  const checkIfDataExist = useCallback((data: IReviewForm): Promise<boolean> => new Promise<boolean>((resolve) => {
+    API.checkReview(data).then(({found}) => {
+      resolve(found);
+    });
+  }), []);
+
   const onSave = useCallback(
     (data: IReviewForm) => {
       if (isAnonymousUser) {
@@ -56,23 +62,29 @@ export const ReviewsForm = (): React.ReactElement => {
         return;
       }
 
-      new Promise((resolve) => {
-        setIsSaving(true);
+      checkIfDataExist(data).then((goFurther) => {
+        if (goFurther) {
+          new Promise((resolve) => {
+            setIsSaving(true);
 
-        if (model === null) {
-          resolve(API.createReview(data));
-        } else if (id) {
-          resolve(API.updateReview(id, data));
+            if (model === null) {
+              resolve(API.createReview(data));
+            } else if (id) {
+              resolve(API.updateReview(id, data));
+            } else {
+              toast.error("Непредвиденная ситуация при сохранении");
+              setIsSaving(false);
+            }
+          })
+            .then(() => {
+              toast.success("Успешно сохранено");
+              push(reviewListPath);
+            })
+            .catch(toast.error);
         } else {
-          toast.error("Непредвиденная ситуация при сохранении");
-          setIsSaving(false);
+          toast.warning('Такая запись уже есть')
         }
       })
-        .then(() => {
-          toast.success("Успешно сохранено");
-          push(reviewListPath);
-        })
-        .catch(toast.error);
     },
     [id, model]
   );

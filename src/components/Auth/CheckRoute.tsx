@@ -31,9 +31,8 @@ export const CheckRoute = (): React.ReactElement => {
     API.checkAuth()
       .then((response) => {
         setUserEmail(response.email);
-        setLoadUser(false);
       })
-      .catch(() => {
+      .finally(() => {
         setLoadUser(false);
       });
   }, [history]);

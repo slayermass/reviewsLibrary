@@ -10,9 +10,14 @@ import {
 import { APIBaseInterface } from "utils/dbBaseInterface";
 import { httpGet, httpPost, httpPut } from "utils/http";
 
+
 export class DbMongo extends APIBaseInterface {
   checkAuth() {
     return httpGet("/me");
+  }
+
+  checkReview(model: IReviewForm): Promise<{ found: boolean }> {
+    return httpPost('/checkreview', model).then(({found}) => found);
   }
 
   getReviewById(id: string): Promise<IReviewItemModel | null> {
@@ -22,7 +27,7 @@ export class DbMongo extends APIBaseInterface {
   }
 
   login(email: string, password: string): Promise<unknown> {
-    return httpPost("/login", { email, password });
+    return httpPost("/login", {email, password});
   }
 
   subscribe(email: string) {
