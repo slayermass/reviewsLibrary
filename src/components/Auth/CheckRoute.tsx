@@ -25,14 +25,14 @@ export const CheckRoute = (): React.ReactElement => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isAnonymousUser] = useState(false);
 
-
   /** проверить авторизованность пользователя */
   useEffect(() => {
     API.checkAuth()
       .then((response) => {
         setUserEmail(response.email);
+        setLoadUser(false);
       })
-      .finally(() => {
+      .catch(() => {
         setLoadUser(false);
       });
   }, [history]);

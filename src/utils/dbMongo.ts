@@ -16,7 +16,7 @@ export class DbMongo extends APIBaseInterface {
     return httpGet("/me");
   }
 
-  checkReview(model: IReviewForm): Promise<{ found: boolean }> {
+  checkReview(model: IReviewForm): Promise<boolean> {
     return httpPost('/checkreview', model).then(({found}) => found);
   }
 

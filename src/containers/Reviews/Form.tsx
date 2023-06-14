@@ -50,8 +50,8 @@ export const ReviewsForm = (): React.ReactElement => {
   const [isSaving, setIsSaving] = useState(false);
 
   const checkIfDataExist = useCallback((data: IReviewForm): Promise<boolean> => new Promise<boolean>((resolve) => {
-    API.checkReview(data).then(({found}) => {
-      resolve(found);
+    API.checkReview(data).then((found) => {
+      resolve(!found);
     });
   }), []);
 
@@ -62,11 +62,11 @@ export const ReviewsForm = (): React.ReactElement => {
         return;
       }
 
+      setIsSaving(true);
+
       checkIfDataExist(data).then((goFurther) => {
         if (goFurther) {
           new Promise((resolve) => {
-            setIsSaving(true);
-
             if (model === null) {
               resolve(API.createReview(data));
             } else if (id) {
@@ -82,6 +82,8 @@ export const ReviewsForm = (): React.ReactElement => {
             })
             .catch(toast.error);
         } else {
+          setIsSaving(false);
+
           toast.warning('Такая запись уже есть')
         }
       })
