@@ -64,29 +64,29 @@ export const ReviewsForm = (): React.ReactElement => {
 
       setIsSaving(true);
 
-      checkIfDataExist(data).then((goFurther) => {
-        if (goFurther) {
-          new Promise((resolve) => {
-            if (model === null) {
+      new Promise((resolve) => {
+        if (model === null) {
+          checkIfDataExist(data).then((goFurther) => {
+            if (goFurther) {
               resolve(API.createReview(data));
-            } else if (id) {
-              resolve(API.updateReview(id, data));
             } else {
-              toast.error("Непредвиденная ситуация при сохранении");
               setIsSaving(false);
-            }
-          })
-            .then(() => {
-              toast.success("Успешно сохранено");
-              push(reviewListPath);
-            })
-            .catch(toast.error);
-        } else {
-          setIsSaving(false);
 
-          toast.warning('Такая запись уже есть')
+              toast.warning('Такая запись уже есть')
+            }
+          });
+        } else if (id) {
+          resolve(API.updateReview(id, data));
+        } else {
+          toast.error("Непредвиденная ситуация при сохранении");
+          setIsSaving(false);
         }
       })
+        .then(() => {
+          toast.success("Успешно сохранено");
+          push(reviewListPath);
+        })
+        .catch(toast.error);
     },
     [id, model]
   );
