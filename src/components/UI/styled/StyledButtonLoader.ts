@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const StyledButtonLoader = styled.div`
   padding: 4px 0px;
 
   &:after {
-    content: " ";
+    content: ' ';
     display: block;
     width: 21px;
     height: 21px;

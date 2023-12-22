@@ -1,5 +1,5 @@
-import React, { ChangeEvent } from "react";
-import styled from "styled-components";
+import React, { ChangeEvent } from 'react';
+import styled from 'styled-components';
 
 const Label = styled.label`
   top: 0;
@@ -31,19 +31,22 @@ const Wrapper = styled.div`
   border: 0;
   padding: 2px 0;
   background: white no-repeat;
-  background-image: linear-gradient(to bottom, #212b6e, #212b6e),
-    linear-gradient(to bottom, #fafafa, #8c9094);
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-image: linear-gradient(to bottom, #212b6e, #212b6e), linear-gradient(to bottom, #fafafa, #8c9094);
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   transition: background-size 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
   outline: none;
 
   &:hover {
-    background-size: 100% 2px, 100% 1px;
+    background-size:
+      100% 2px,
+      100% 1px;
     outline: none;
     transition: none;
-    background-image: linear-gradient(to bottom, #000000de, #000000de),
-      linear-gradient(to bottom, #000000de, #000000de);
   }
 `;
 
@@ -60,11 +63,7 @@ type Props = {
   options: SelectOptionsType;
 };
 
-export const UiSelect = ({
-  onChange,
-  options,
-  label,
-}: Props): React.ReactElement => {
+export const UiSelect = ({ onChange, options, label }: Props): React.ReactElement => {
   const id = Math.random().toString();
 
   return (

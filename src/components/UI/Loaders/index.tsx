@@ -1,5 +1,5 @@
-import React, { memo } from "react";
-import styled from "styled-components";
+import React, { memo } from 'react';
+import styled from 'styled-components';
 
 const WrapLoader = styled.div`
   width: 100%;
@@ -17,14 +17,13 @@ const Loader = styled.div`
   margin: 0 auto;
 
   &:after {
-    content: " ";
+    content: ' ';
     display: block;
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    border: 5px solid ${(p) => (p.color ? p.color : "#fff")};
-    border-color: ${(p) => (p.color ? p.color : "#fff")} transparent
-      ${(p) => (p.color ? p.color : "#fff")} transparent;
+    border: 5px solid ${(p) => (p.color ? p.color : '#fff')};
+    border-color: ${(p) => (p.color ? p.color : '#fff')} transparent ${(p) => (p.color ? p.color : '#fff')} transparent;
     animation: lds-dual-ring 1.2s linear infinite;
   }
 
@@ -42,14 +41,12 @@ type Props = {
   color?: string;
 };
 
-export const UiLoader = memo(
-  ({ color }: Props): React.ReactElement => <Loader color={color} />
-);
+export const UiLoader = memo(({ color }: Props): React.ReactElement => <Loader color={color} />);
 
 export const UiGlobalLoader = memo(
   ({ color }: Props): React.ReactElement => (
     <WrapLoader>
       <UiLoader color={color} />
     </WrapLoader>
-  )
+  ),
 );

@@ -1,10 +1,12 @@
 import React, { memo, useMemo, useState } from "react";
 import styled from "styled-components";
 
-import { SvgRemove } from "assets/svg/remove";
+import { SvgRemove } from "src/assets/svg/remove";
+import { SafeAnyType } from "src/utils/safeAny";
 
 const Label = styled.label<{ active: boolean }>`
-  transition: color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
+  transition:
+    color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
     transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
   top: 0;
   left: 0;
@@ -29,12 +31,18 @@ const Wrapper = styled.div<{ active: boolean }>`
   background: white no-repeat;
   background-image: linear-gradient(to bottom, #212b6e, #212b6e),
     linear-gradient(to bottom, #fafafa, #8c9094);
-  background-size: 0 2px, 100% 1px;
-  background-position: 50% 100%, 50% 100%;
+  background-size:
+    0 2px,
+    100% 1px;
+  background-position:
+    50% 100%,
+    50% 100%;
   transition: background-size 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
 
   &:hover {
-    background-size: 100% 2px, 100% 1px;
+    background-size:
+      100% 2px,
+      100% 1px;
     outline: none;
     transition: none;
     background-image: linear-gradient(to bottom, #000000de, #000000de),
@@ -103,7 +111,7 @@ const ClearButton = styled.button`
 
 type Props = {
   label: string;
-  onChange: (v: any) => void;
+  onChange: (v: SafeAnyType) => void;
   value: string | number;
 
   type?: "text" | "number";
@@ -127,7 +135,7 @@ export const UiInput = memo(
     const id = useMemo(() => Math.random().toString(), []);
 
     const [localValue, setLocalValue] = useState<string>(() =>
-      value.toString()
+      value.toString(),
     );
 
     const [focus, setFocus] = useState(false);
@@ -175,5 +183,5 @@ export const UiInput = memo(
         )}
       </Wrapper>
     );
-  }
+  },
 );

@@ -1,26 +1,28 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import { SafeAnyType } from 'src/utils/safeAny';
+import styled from 'styled-components';
 
-import { UiInput } from "components/UI/inputs/Input";
-import { OnFilterSearchType, ReviewsListFilter } from "containers/Reviews/List";
-import { ratingList } from "config";
-import { SelectOptionsType, UiSelect } from "components/UI/inputs/Select";
-import { StyledCol, StyledRow } from "components/UI/styled/StyledGrid";
-import { ListSortType } from "containers/Reviews/common";
-import { prepareText } from "utils/prepareText";
+import { UiInput } from 'src/components/UI/inputs/Input';
+import { OnFilterSearchType } from 'src/pages/ReviewList';
+import { ratingList } from 'src/config';
+import { SelectOptionsType, UiSelect } from 'src/components/UI/inputs/Select';
+import { StyledCol, StyledRow } from 'src/components/UI/styled/StyledGrid';
+import { ListSortType } from 'src/containers/Reviews/common';
+import { prepareText } from 'src/utils/prepareText';
+import { ReviewsListFilter } from 'src/store/reviews';
 
 const sortOptions: SelectOptionsType = [
-  { value: "dateDesc", label: "Дата по убыванию" },
-  { value: "dateAsc", label: "Дата по возрастанию" },
-  { value: "ratingAsc", label: "Рейтинг по возрастанию" },
-  { value: "ratingDesc", label: "Рейтинг по убыванию" },
+  { value: 'dateDesc', label: 'Дата по убыванию' },
+  { value: 'dateAsc', label: 'Дата по возрастанию' },
+  { value: 'ratingAsc', label: 'Рейтинг по возрастанию' },
+  { value: 'ratingDesc', label: 'Рейтинг по убыванию' },
 ];
 
-const ratingOptions: SelectOptionsType = [{ label: "Любой", value: 0 }].concat(
-  ratingList.map((r) => ({
+const ratingOptions: SelectOptionsType = [{ label: 'Любой', value: 0 }].concat(
+  ratingList.map((r: SafeAnyType) => ({
     value: r,
     label: r.toString(),
-  }))
+  })),
 );
 
 const Wrapper = styled(StyledRow)`
@@ -37,17 +39,13 @@ type Props = {
   values: ReviewsListFilter;
 };
 
-export const ReviewsFilter = ({
-  onFilterSearch,
-  onSortChange,
-  values,
-}: Props): React.ReactElement => (
+export const ReviewsFilter = ({ onFilterSearch, onSortChange, values }: Props): React.ReactElement => (
   <Wrapper>
     <StyledCol>
       <UiInput
         value={values.group}
         label="Группа"
-        onChange={(v) => onFilterSearch("group")(prepareText(v))}
+        onChange={(v: SafeAnyType) => onFilterSearch('group')(prepareText(v))}
         showClear
         maxLength={100}
       />
@@ -56,7 +54,7 @@ export const ReviewsFilter = ({
       <UiInput
         value={values.album}
         label="Альбом"
-        onChange={(v) => onFilterSearch("album")(prepareText(v))}
+        onChange={(v: SafeAnyType) => onFilterSearch('album')(prepareText(v))}
         showClear
         maxLength={100}
       />
@@ -65,7 +63,7 @@ export const ReviewsFilter = ({
       <UiInput
         value={values.comment}
         label="Комментарий"
-        onChange={(v) => onFilterSearch("comment")(prepareText(v))}
+        onChange={(v: SafeAnyType) => onFilterSearch('comment')(prepareText(v))}
         showClear
         maxLength={100}
       />
@@ -75,14 +73,14 @@ export const ReviewsFilter = ({
         <StyledCol>
           <UiSelect
             label="Рейтинг"
-            onChange={(v) => onFilterSearch("rating")(+v)}
+            onChange={(v: SafeAnyType) => onFilterSearch('rating')(+v)}
             options={ratingOptions}
           />
         </StyledCol>
         <DoubleCol>
           <UiSelect
             label="Сортировка"
-            onChange={(v) => onSortChange(v as ListSortType)}
+            onChange={(v: SafeAnyType) => onSortChange(v as ListSortType)}
             options={sortOptions}
           />
         </DoubleCol>

@@ -1,11 +1,11 @@
 import React, { ChangeEvent, memo } from "react";
 import styled from "styled-components";
 
-import { SvgToBack } from "assets/svg/toBack";
-import { SvgToEnd } from "assets/svg/toEnd";
-import { SvgToNext } from "assets/svg/toNext";
-import { SvgToStart } from "assets/svg/toStart";
-import { defaultSizeByPageTable } from "config";
+import { SvgToBack } from "src/assets/svg/toBack";
+import { SvgToEnd } from "src/assets/svg/toEnd";
+import { SvgToNext } from "src/assets/svg/toNext";
+import { SvgToStart } from "src/assets/svg/toStart";
+import { defaultSizeByPageTable } from "src/config";
 
 const SVGButton = styled.button`
   cursor: ${(p) => (p.disabled ? "default" : "pointer")};
@@ -143,5 +143,5 @@ export const UiPagination = memo(
         </div>
       </FooterInfo>
     );
-  }
+  },
 );

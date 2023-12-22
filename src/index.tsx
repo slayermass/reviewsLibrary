@@ -1,10 +1,29 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { App } from "App";
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer, Zoom } from 'react-toastify';
 
-ReactDOM.render(
+import { App } from 'src/App';
+
+import 'react-toastify/dist/ReactToastify.css';
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+
+root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <ToastContainer position="top-center" autoClose={5000} transition={Zoom} draggable={false} />
+      <BrowserRouter basename="/">
+        <App />
+      </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>,
-  document.getElementById("root")
 );

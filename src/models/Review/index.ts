@@ -1,15 +1,22 @@
-import { IReviewItemModel } from "models/Review/interfaces";
+import { IReviewItemModel } from "src/models/Review/interfaces";
+import { SafeAnyType } from "src/utils/safeAny";
 
 export class ReviewItemModel implements IReviewItemModel {
   readonly album: string;
+
   readonly comment: string;
+
   readonly date: Date;
+
   readonly group: string;
+
   readonly id: string;
+
   readonly rating: number;
+
   readonly author: string;
 
-  constructor(params: any = {}) {
+  constructor(params: SafeAnyType = {}) {
     this.album = params.a;
     this.comment = params.c;
     this.date = new Date(params.d);

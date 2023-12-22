@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const StyledCol = styled.div`
   width: calc(100% / 4 - 2rem);

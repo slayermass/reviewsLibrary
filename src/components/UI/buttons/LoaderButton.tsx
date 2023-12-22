@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-import { StyledButtonLoader } from "components/UI/styled/StyledButtonLoader";
-import { StyledPrimaryButton } from "components/UI/styled/StyledButton";
+import { StyledButtonLoader } from "src/components/UI/styled/StyledButtonLoader";
+import { StyledPrimaryButton } from "src/components/UI/styled/StyledButton";
 
 const Button = styled(StyledPrimaryButton)<{ loading: boolean }>`
   ${(p) => p.loading && "pointer-events: none;"}
@@ -28,5 +28,5 @@ export const UiLoaderButton = ({
 );
 
 export const UiLoaderSubmitButton = (
-  props: Omit<Props, "type">
+  props: Omit<Props, "type">,
 ): React.ReactElement => UiLoaderButton({ type: "submit", ...props });

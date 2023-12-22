@@ -1,36 +1,44 @@
-import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { ToastContainer, Zoom } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Normalize } from "styled-normalize";
+import { UserType } from 'src/models/User';
+import { PrivateRoutes } from 'src/routes/private';
+import { PublicRoutes, ROUTE_LOGIN_PAGE } from 'src/routes/public';
+import useGlobalStore from 'src/store';
+import { API } from 'src/utils/apiDriver';
+import { UiGlobalLoader } from 'src/components/UI/Loaders';
 
-import { createGlobalStyle } from "styled-components";
+const CheckUser = () => {
+  const navigate = useNavigate();
 
-import { CheckRoute } from "components/Auth/CheckRoute";
+  const { setUser, user } = useGlobalStore((state) => state);
 
-const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: #fafafa;
-    margin: 0;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-`;
+  /** проверить авторизованность пользователя */
+  useEffect(() => {
+    API.checkAuth()
+      .then((response: UserType) => {
+        setUser({ loading: false, response });
+      })
+      .catch((e) => {
+        setUser({ loading: false, response: null });
 
-export const App = (): React.ReactElement => (
-  <>
-    <GlobalStyle />
-    <ToastContainer
-      position="top-center"
-      autoClose={5000}
-      transition={Zoom}
-      draggable={false}
-    />
-    <Normalize />
-    <Router>
-      <CheckRoute />
-    </Router>
-  </>
-);
+        navigate(ROUTE_LOGIN_PAGE);
+      });
+  }, [navigate, setUser]);
+
+  return <UiGlobalLoader />;
+};
+
+export const App = (): React.ReactElement => {
+  const user = useGlobalStore((state) => state.user);
+
+  return (
+    <>
+      {user.loading && <CheckUser />}
+
+      <PublicRoutes />
+
+      {user.response !== null && <PrivateRoutes />}
+    </>
+  );
+};

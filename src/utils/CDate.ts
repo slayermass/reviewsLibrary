@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import {
   endOfDay,
   format,
@@ -18,7 +19,7 @@ abstract class ICDate {
    */
   static getUnixTime(date?: Date | number) {
     return getUnixTime(
-      date instanceof Date || typeof date === "number" ? date : new Date()
+      date instanceof Date || typeof date === "number" ? date : new Date(),
     );
   }
 
@@ -44,7 +45,7 @@ abstract class ICDate {
    */
   static endOfDay(date?: Date | number) {
     return endOfDay(
-      date instanceof Date || typeof date === "number" ? date : new Date()
+      date instanceof Date || typeof date === "number" ? date : new Date(),
     );
   }
 
@@ -85,7 +86,7 @@ abstract class ICDate {
           unit: "day",
           locale: currentLocale,
           roundingMethod: "floor",
-        })
+        }),
       );
 
       const daysTo = Math.floor(timeLeftInSeconds / oneDay);
@@ -98,7 +99,7 @@ abstract class ICDate {
         unit: "hour",
         locale: currentLocale,
         roundingMethod: "floor",
-      })
+      }),
     );
 
     return formatDates.join(" ");
