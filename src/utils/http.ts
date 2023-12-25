@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { apiUrl } from "utils/env";
+import { apiUrl } from "src/utils/env";
+import { SafeAnyType } from "src/utils/safeAny";
 
 axios.defaults.baseURL = `${apiUrl}/api`;
 axios.defaults.withCredentials = true;
@@ -17,16 +18,16 @@ axios.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 /** возможные ошибки, связанные с http */
 export type HttpErrors = Error | AxiosError;
 
-type httpGetType = <R = any>(
+type httpGetType = <R = SafeAnyType>(
   path: string,
-  params?: any,
-  data?: AxiosRequestConfig
+  params?: SafeAnyType,
+  data?: AxiosRequestConfig,
 ) => Promise<R>;
 /**
  * API метод get
@@ -40,10 +41,10 @@ export const httpGet: httpGetType = (path, params = {}, config = {}) =>
     ...config,
   });
 
-type httpPostType = <R = any>(
+type httpPostType = <R = SafeAnyType>(
   path: string,
-  data?: any,
-  headers?: any
+  data?: SafeAnyType,
+  headers?: SafeAnyType,
 ) => Promise<R>;
 /**
  * API метод post
@@ -56,10 +57,10 @@ export const httpPost: httpPostType = (path, data = {}, headers = {}) =>
     headers: { ...headers },
   });
 
-type httpPutType = <R = any>(
+type httpPutType = <R = SafeAnyType>(
   path: string,
-  data?: any,
-  headers?: any
+  data?: SafeAnyType,
+  headers?: SafeAnyType,
 ) => Promise<R>;
 /**
  * API метод put

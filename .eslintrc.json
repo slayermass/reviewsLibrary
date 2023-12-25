@@ -1,61 +1,116 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": ["airbnb", "plugin:@typescript-eslint/recommended", "google", "plugin:react/recommended", "prettier"],
+  "extends": [
+    "airbnb",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:react-hooks/recommended"
+  ],
   "env": {
     "browser": true,
     "es6": true
   },
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
   "rules": {
-    "import/extensions": [
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/extensions": "off",
+    "react/display-name": "off",
+    "no-shadow": "off",
+    "func-names": [
       "error",
-      "ignorePackages",
+      "always",
       {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
+        "generators": "never"
+      }
+    ],
+    "react/jsx-filename-extension": [
+      2,
+      {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 120,
+        "ignorePattern": "^import .*",
+        "ignoreComments": true
       }
     ],
     "react/require-default-props": "off",
-    "@typescript-eslint/no-unused-vars": "warn",
-    "no-unused-vars": "warn",
-    "@typescript-eslint/prefer-interface": "off",
-    "@typescript-eslint/interface-name-prefix": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-ts-ignore": "off",
-    "@typescript-eslint/no-empty-function": "warn",
-    "import/prefer-default-export": "off",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
-    "@typescript-eslint/explicit-member-accessibility": 0,
-    "max-len": ["error", { "code": 120 }],
-    "react/no-did-update-set-state": "error",
-    "prefer-const": "warn",
+    "react/prop-types": "off",
+    // makes some probles when the type is set in TS
     "react/jsx-one-expression-per-line": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "lines-between-class-members": "off",
-    "react/no-array-index-key": "warn",
-    "arrow-body-style": ["error", "as-needed"],
-    "@typescript-eslint/camelcase": "off",
-    "func-names": ["error", "always", {"generators": "never"}],
-    "react/jsx-curly-newline": "off",
     "react/state-in-constructor": "off",
-    "react/jsx-props-no-spreading": "off",
-    "react/static-property-placement": "off",
-    "max-classes-per-file": "off",
-    "jsx-a11y/label-has-associated-control": "off",
-    "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }],
-    "quote-props": ["error", "as-needed"],
-    "react/display-name": "off", // почти бесполезно
-    "no-use-before-define": "off", // непонятки
-    // жесткие, но очень интересные правила
-    "require-jsdoc": "off",
-    "valid-jsdoc": "off"
+    "linebreak-style": ["warn", "unix"],
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-bitwise": [
+      "error",
+      {
+        "allow": [
+          "~"
+        ]
+      }
+    ],
+    "import/no-extraneous-dependencies": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": [
+      "error"
+    ],
+    "import/no-unresolved": "off",
+    "react/jsx-curly-newline": "off",
+    // prettier
+    "implicit-arrow-linebreak": "off",
+    // prettier
+    "import/prefer-default-export": "off",
+    // prettier
+    "comma-dangle": "off",
+    // prettier
+    "indent": "off",
+    // prettier
+    "object-curly-newline": "off",
+    // prettier
+    "no-param-reassign": "off",
+    // immer.js
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function"
+      }
+    ],
+    "react/jsx-no-useless-fragment": "off",
+    "react/jsx-key": [
+      1,
+      {
+        "checkFragmentShorthand": true,
+        "warnOnDuplicates": true
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js",".jsx",".ts",".tsx"],
-        "moduleDirectory": ["node_modules", "src/"]
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ],
+        "moduleDirectory": [
+          "node_modules",
+          "."
+        ]
       }
     }
   }
