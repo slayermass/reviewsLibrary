@@ -60,7 +60,7 @@ const initialState: State = {
     sort: 'dateDesc',
   },
 
-  item: { loading: true, response: null },
+  item: { loading: false, response: null },
 };
 
 const useReviewsStore = create<State & Actions>()((set, get) => ({
