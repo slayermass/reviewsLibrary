@@ -8,7 +8,7 @@ import { UiInput } from 'src/components/UI/inputs/UiInput';
 import { SelectOptionsType, UiSelect } from 'src/components/UI/inputs/UiSelect';
 import { SafeAnyType } from 'src/utils/safeAny';
 import { StateFormReturnType, useStateForm } from 'src/utils/stateForm';
-import { OnFilterSearchType } from 'src/pages/ReviewList';
+import { OnFilterSearchType } from 'src/pages/ReviewList/index';
 import { ratingList } from 'src/config';
 import { ListSortType } from 'src/models/Review/common';
 

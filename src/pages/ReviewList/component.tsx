@@ -17,7 +17,7 @@ import {
 import React, { FC } from 'react';
 
 import { defaultSizeByPageTable } from 'src/config';
-import { ReviewsFilter } from 'src/components/Reviews/Filter';
+import { ReviewsFilter } from 'src/pages/ReviewList/Filter';
 import { UiLoader } from 'src/components/UI/Loaders';
 import { UiStarsBlock } from 'src/components/UI/StarsBlock';
 import { ListSortType } from 'src/models/Review/common';
