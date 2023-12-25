@@ -230,9 +230,11 @@ export type StateFormReturnType<FormValues extends StateFormUnknownFormType = Sa
 export const useStateForm = <FormValues extends StateFormUnknownFormType>({
   defaultValues,
   mode = 'onBlur',
+  onAnyValueChanged,
 }: {
   defaultValues?: DeepPartial<FormValues>;
   mode?: 'onChange' | 'onBlur' | 'onSubmit';
+  onAnyValueChanged?: (data: FormValues) => void;
 } = {}): StateFormReturnType<FormValues> => {
   const initialValues = useRef(defaultValues || ({} as FormValues));
 
@@ -540,6 +542,10 @@ export const useStateForm = <FormValues extends StateFormUnknownFormType>({
     [changeStateForm, cloneDeep, validateInput],
   );
 
+  const onAnyValueChangedLocal = useRef(() => {
+    onAnyValueChanged?.(getValue());
+  });
+
   const onChange: StateFormOnChange = useCallback(
     (name, value, options) => {
       const newValue = options?.merge === true ? cloneDeep(merge(get(formState.current, name), value)) : value;
@@ -556,6 +562,8 @@ export const useStateForm = <FormValues extends StateFormUnknownFormType>({
       );
 
       setFieldOptionsValue(name, checkDirtyField(name), 'isDirty');
+
+      onAnyValueChangedLocal.current();
 
       // prevent checkboxes show errors immediately after registering
       if (
