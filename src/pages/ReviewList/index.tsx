@@ -7,7 +7,9 @@ import useGlobalStore from 'src/store';
 import useReviewsStore, { ReviewsListFilter } from 'src/store/reviews';
 import { SafeAnyType } from 'src/utils/safeAny';
 
-export type OnFilterSearchType = (name: 'group' | 'album' | 'rating' | 'comment') => (value: string | number) => void;
+export type OnFilterSearchType = (
+  name: 'group' | 'album' | 'rating' | 'comment',
+) => (value: string | number | null) => void;
 
 export const ReviewsListPage = (): React.ReactElement => {
   const user = useGlobalStore((state) => state.user.response as UserType);
@@ -25,7 +27,6 @@ export const ReviewsListPage = (): React.ReactElement => {
 
   /** изменение фильтра */
   const changeFilterProp = (prop: keyof ReviewsListFilter, obj?: SafeAnyType) => (value: string | number) => {
-    // loadList(cleanupFilter({ ...listFilter, ...(obj || {}), [prop]: value }) as SafeAnyType);
     loadList({ ...listFilter, ...(obj || {}), [prop]: value });
   };
 
@@ -36,9 +37,8 @@ export const ReviewsListPage = (): React.ReactElement => {
   const onFilterSearchDebounced = useRef(
     debounce((name, value) => {
       // TODO при смене ввода инпутов, теряется предыдущий ввод
-      // setFilter({ ...filter, [name]: value });
       changeFilterProp(name)(value);
-    }, 500),
+    }, 800),
   );
 
   const onFilterSearch: OnFilterSearchType = (name) => (value) => {

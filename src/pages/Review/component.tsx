@@ -1,45 +1,14 @@
-import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import LoadingButton from '@mui/lab/LoadingButton';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useHistory } from "react-router-dom";
-import styled from 'styled-components';
 
-import { UiLoaderSubmitButton } from 'src/components/UI/buttons/LoaderButton';
-import { UiInput } from 'src/components/UI/inputs/Input';
-import { StyledButton } from 'src/components/UI/styled/StyledButton';
-import { StyledHeader } from 'src/components/UI/styled/StyledHeader';
+import { useStateForm } from 'src/utils/stateForm';
+import { RecursiveNonNullable, RecursiveNullable } from 'src/utils/types';
 import { IReviewForm, IReviewItemModel } from 'src/models/Review/interfaces';
 import { prepareText } from 'src/utils/prepareText';
 import { SafeAnyType } from 'src/utils/safeAny';
-
-const Card = styled.div`
-  margin: 64px 36px;
-  padding: 20px;
-  box-shadow:
-    0 1px 5px 0 rgba(0, 0, 0, 0.2),
-    0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 3px 1px -2px rgba(0, 0, 0, 0.12);
-  background: #fff;
-  border-radius: 4px;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-`;
-const InputRow = styled.div`
-  padding: 10px 0;
-`;
-
-const CancelButton = styled(StyledButton)`
-  color: #3f51b5;
-  border: 1px solid rgba(63, 81, 181, 0.5);
-
-  &:hover {
-    border: 1px solid #3f51b5;
-    background-color: rgba(63, 81, 181, 0.08);
-  }
-`;
+import { Box, Button, Container, Paper, Typography } from '@mui/material';
+import { UiInput } from 'src/components/UI/inputs/UiInput';
 
 const getOrElse = (obj: Record<string, SafeAnyType> | null, prop: string, elseValue: SafeAnyType) =>
   obj && obj[prop] !== undefined && obj[prop] !== null ? obj[prop] : elseValue;
@@ -52,38 +21,50 @@ type Props = {
   userEmail: string | null;
 };
 
+type FormValues = RecursiveNullable<{
+  group: string;
+  album: string;
+  rating: number;
+  comment: string;
+}>;
+
 export const ReviewFormComponent = ({ model, onSave, isSaving, canSave, userEmail }: Props): React.ReactElement => {
   const navigate = useNavigate();
 
   const [isSubmitActive, setIsSubmitActive] = useState(false);
 
-  const [group, setGroup] = useState(getOrElse(model, 'group', ''));
-  const [album, setAlbum] = useState(getOrElse(model, 'album', ''));
-  const [rating, setRating] = useState(getOrElse(model, 'rating', 5));
-  const [comment, setComment] = useState(getOrElse(model, 'comment', ''));
-
-  useEffect(() => {
-    if (group.length && album.length && comment.length && rating >= 1 && rating <= 10) {
-      setIsSubmitActive(true);
-    } else if (isSubmitActive) {
-      setIsSubmitActive(false);
-    }
-  }, [group, album, rating, comment, isSubmitActive]);
+  const formProps = useStateForm<FormValues>({
+    defaultValues: model || {
+      rating: 5,
+    },
+    onAnyValueChanged: (formData) => {
+      if (
+        (formData.group?.length || 0) >= 1 &&
+        (formData.album?.length || 0) >= 1 &&
+        (formData.comment?.length || 0) >= 1 &&
+        (formData.rating || 0) >= 1
+      ) {
+        setIsSubmitActive(true);
+      } else {
+        setIsSubmitActive(false);
+      }
+    },
+  });
 
   const onReset = useCallback(() => navigate(-1), [navigate]);
 
-  const onSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const onSubmit = (formData: FormValues) => {
     if (canSave) {
-      const numberRating = +rating;
+      const data = formData as RecursiveNonNullable<FormValues>;
+
+      const numberRating = +data.rating;
 
       onSave({
-        group: prepareText(group),
-        album: prepareText(album),
+        group: prepareText(data.group),
+        album: prepareText(data.album),
         // eslint-disable-next-line no-nested-ternary
         rating: numberRating > 10 ? 10 : numberRating < 1 ? 1 : numberRating,
-        comment: prepareText(comment),
+        comment: prepareText(data.comment),
         date: getOrElse(model, 'date', new Date()),
         author: userEmail || '',
       });
@@ -91,33 +72,43 @@ export const ReviewFormComponent = ({ model, onSave, isSaving, canSave, userEmai
   };
 
   return (
-    <>
-      <StyledHeader>
-        Форма {model === null ? 'создания' : 'редактирования'} обзора ({userEmail || 'Почта не указана'})
-      </StyledHeader>
-      <Card>
-        <form onSubmit={onSubmit} onReset={onReset}>
-          <InputRow>
-            <UiInput label="Группа" onChange={setGroup} value={group} maxLength={100} />
-          </InputRow>
-          <InputRow>
-            <UiInput label="Альбом" onChange={setAlbum} value={album} maxLength={100} />
-          </InputRow>
-          <InputRow>
-            <UiInput label="Оценка" onChange={setRating} type="number" min={1} max={10} value={rating} />
-          </InputRow>
-          <InputRow>
-            <UiInput label="Комментарий" onChange={setComment} value={comment} maxLength={600} />
-          </InputRow>
+    <Container maxWidth={false}>
+      <Box>
+        <Typography variant="h4" component="h1" align="center" sx={{ mt: 4, mb: 4 }}>
+          Форма {model === null ? 'создания' : 'редактирования'} обзора ({userEmail || 'Почта не указана'})
+        </Typography>
+      </Box>
 
+      <Paper
+        sx={{
+          px: 3,
+          py: 3,
+        }}
+      >
+        <form onSubmit={formProps.onSubmit(onSubmit)} onReset={onReset}>
+          <UiInput formProps={formProps} name="group" label="Группа" variant="standard" required autoFocus />
+          <UiInput formProps={formProps} name="album" label="Альбом" variant="standard" required />
+          <UiInput formProps={formProps} name="rating" label="Оценка" type="number" variant="standard" required />
+          <UiInput formProps={formProps} name="comment" label="Комментарий" variant="standard" required />
           {canSave && (
-            <Buttons>
-              <CancelButton type="reset">Отмена</CancelButton>
-              <UiLoaderSubmitButton disabled={!isSubmitActive} loading={isSaving} text="Сохранить" />
-            </Buttons>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mt: 3,
+              }}
+            >
+              <Button type="reset" variant="outlined">
+                Отмена
+              </Button>
+              <LoadingButton type="submit" variant="outlined" loading={isSaving} disabled={!isSubmitActive}>
+                <span>Сохранить</span>
+              </LoadingButton>
+            </Box>
           )}
         </form>
-      </Card>
-    </>
+      </Paper>
+    </Container>
   );
 };

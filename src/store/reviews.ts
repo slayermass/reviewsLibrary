@@ -2,8 +2,8 @@ import { toast } from 'react-toastify';
 import { create } from 'zustand';
 
 import { defaultSizePageTable } from 'src/config';
-import { ListSortType } from 'src/containers/Reviews/common';
-import { IReviewItemModel, IReviewModel } from 'src/models/Review/interfaces';
+import { ListSortType } from 'src/models/Review/common';
+import { IReviewForm, IReviewItemModel, IReviewModel } from 'src/models/Review/interfaces';
 import { API } from 'src/utils/apiDriver';
 
 /** MISC */
@@ -34,9 +34,11 @@ const cleanupFilter = (params: ReviewsListFilter): ReviewsListFilter =>
 type Actions = {
   loadList: (filters: ReviewsListFilter) => void;
   getList: (filters?: ReviewsListFilter) => void;
+  clearList: () => void;
 
-  getItem: (id: string) => void;
+  getItem: (id?: string) => void;
   clearItem: () => void;
+  updateItem: (id: string, data: IReviewForm) => void;
 };
 
 type State = {
@@ -68,6 +70,12 @@ const useReviewsStore = create<State & Actions>()((set, get) => ({
     if (get().list.response.data.length === 0 && !get().list.loading) {
       get().loadList(filters || initialState.listFilter);
     }
+  },
+  clearList: () => {
+    set({
+      list: { ...initialState.list },
+      listFilter: { ...initialState.listFilter },
+    });
   },
   loadList: (filters) => {
     set((state) => ({
@@ -101,37 +109,66 @@ const useReviewsStore = create<State & Actions>()((set, get) => ({
   },
 
   getItem: (id) => {
-    set({
-      item: { loading: true, response: null },
-    });
-
-    const found = get().list.response.data.find((item) => item.id === id);
-
-    if (found) {
+    if (id) {
       set({
-        item: { loading: false, response: found },
+        item: { loading: true, response: null },
       });
-    } else {
-      API.getReviewById(id)
-        .then((responseModel: IReviewItemModel | null) => {
-          set({
-            item: { loading: false, response: responseModel },
-          });
-        })
-        .catch((e) => {
-          set({
-            item: { loading: false, response: null },
-          });
 
-          toast.error(e);
+      const found = get().list.response.data.find((item) => item.id === id);
+
+      if (found) {
+        set({
+          item: { loading: false, response: found },
         });
+      } else {
+        API.getReviewById(id)
+          .then((responseModel: IReviewItemModel | null) => {
+            set({
+              item: { loading: false, response: responseModel },
+            });
+          })
+          .catch((e) => {
+            set({
+              item: { loading: false, response: null },
+            });
+
+            toast.error(e);
+          });
+      }
+    } else {
+      set({
+        item: { loading: false, response: null },
+      });
     }
   },
-
   clearItem: () => {
     set({
       item: { ...initialState.item },
     });
+  },
+  updateItem: (id, model) => {
+    const foundIndex = get().list.response.data.findIndex((item) => item.id === id);
+
+    if (~foundIndex) {
+      set((state) => {
+        const newData = [...state.list.response.data];
+
+        newData[foundIndex] = {
+          id,
+          ...model,
+        };
+
+        return {
+          list: {
+            loading: false,
+            response: {
+              data: newData,
+              amount: state.list.response.amount,
+            },
+          },
+        };
+      });
+    }
   },
 }));
 

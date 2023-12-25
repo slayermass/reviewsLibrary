@@ -1,15 +1,16 @@
+import ClearIcon from '@mui/icons-material/Clear';
+import { Grid, IconButton, InputAdornment } from '@mui/material';
 import React from 'react';
-import { SafeAnyType } from 'src/utils/safeAny';
-import styled from 'styled-components';
 
-import { UiInput } from 'src/components/UI/inputs/Input';
+import useReviewsStore from 'src/store/reviews';
+import { RecursiveNullable } from 'src/utils/types';
+import { UiInput } from 'src/components/UI/inputs/UiInput';
+import { SelectOptionsType, UiSelect } from 'src/components/UI/inputs/UiSelect';
+import { SafeAnyType } from 'src/utils/safeAny';
+import { StateFormReturnType, useStateForm } from 'src/utils/stateForm';
 import { OnFilterSearchType } from 'src/pages/ReviewList';
 import { ratingList } from 'src/config';
-import { SelectOptionsType, UiSelect } from 'src/components/UI/inputs/Select';
-import { StyledCol, StyledRow } from 'src/components/UI/styled/StyledGrid';
-import { ListSortType } from 'src/containers/Reviews/common';
-import { prepareText } from 'src/utils/prepareText';
-import { ReviewsListFilter } from 'src/store/reviews';
+import { ListSortType } from 'src/models/Review/common';
 
 const sortOptions: SelectOptionsType = [
   { value: 'dateDesc', label: 'Дата по убыванию' },
@@ -25,66 +26,92 @@ const ratingOptions: SelectOptionsType = [{ label: 'Любой', value: 0 }].con
   })),
 );
 
-const Wrapper = styled(StyledRow)`
-  margin-bottom: 0.5rem;
-`;
-
-const DoubleCol = styled(StyledCol)`
-  width: calc(100% / 2 - 2rem);
-`;
-
 type Props = {
   onFilterSearch: OnFilterSearchType;
   onSortChange: (sort: ListSortType) => void;
-  values: ReviewsListFilter;
 };
 
-export const ReviewsFilter = ({ onFilterSearch, onSortChange, values }: Props): React.ReactElement => (
-  <Wrapper>
-    <StyledCol>
-      <UiInput
-        value={values.group}
-        label="Группа"
-        onChange={(v: SafeAnyType) => onFilterSearch('group')(prepareText(v))}
-        showClear
-        maxLength={100}
-      />
-    </StyledCol>
-    <StyledCol>
-      <UiInput
-        value={values.album}
-        label="Альбом"
-        onChange={(v: SafeAnyType) => onFilterSearch('album')(prepareText(v))}
-        showClear
-        maxLength={100}
-      />
-    </StyledCol>
-    <StyledCol>
-      <UiInput
-        value={values.comment}
-        label="Комментарий"
-        onChange={(v: SafeAnyType) => onFilterSearch('comment')(prepareText(v))}
-        showClear
-        maxLength={100}
-      />
-    </StyledCol>
-    <StyledCol>
-      <StyledRow>
-        <StyledCol>
-          <UiSelect
-            label="Рейтинг"
-            onChange={(v: SafeAnyType) => onFilterSearch('rating')(+v)}
-            options={ratingOptions}
-          />
-        </StyledCol>
-        <DoubleCol>
-          <UiSelect
-            label="Сортировка"
-            onChange={(v: SafeAnyType) => onSortChange(v as ListSortType)}
-            options={sortOptions}
-          />
-        </DoubleCol>
-      </StyledRow>
-    </StyledCol>
-  </Wrapper>
+type FormValues = RecursiveNullable<{
+  group: string;
+  album: string;
+  comment: string;
+  rating: number;
+  sort: ListSortType;
+}>;
+
+const Input = ({
+  formProps,
+  name,
+  label,
+  onFilterSearch,
+}: {
+  formProps: StateFormReturnType;
+  name: 'group' | 'album' | 'rating' | 'comment';
+  label: string;
+  onFilterSearch: OnFilterSearchType;
+}) => (
+  <UiInput
+    formProps={formProps}
+    name={name}
+    variant="standard"
+    label={label}
+    onChange={onFilterSearch(name)}
+    endAdornment={
+      <InputAdornment position="end">
+        <IconButton
+          onClick={() => {
+            formProps.setValue(name, '');
+
+            onFilterSearch(name)('');
+          }}
+        >
+          <ClearIcon />
+        </IconButton>
+      </InputAdornment>
+    }
+  />
 );
+
+export const ReviewsFilter = ({ onFilterSearch, onSortChange }: Props): React.ReactElement => {
+  const listFilter = useReviewsStore((state) => state.listFilter);
+
+  const formProps = useStateForm<FormValues>({
+    defaultValues: {
+      sort: listFilter.sort,
+    },
+  });
+
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={3}>
+        <Input formProps={formProps} name="group" label="Группа" onFilterSearch={onFilterSearch} />
+      </Grid>
+      <Grid item xs={3}>
+        <Input formProps={formProps} name="album" label="Альбом" onFilterSearch={onFilterSearch} />
+      </Grid>
+      <Grid item xs={3}>
+        <Input formProps={formProps} name="comment" label="Комментарий" onFilterSearch={onFilterSearch} />
+      </Grid>
+      <Grid item xs={1}>
+        <UiSelect
+          formProps={formProps}
+          name="rating"
+          label="Рейтинг"
+          options={ratingOptions}
+          onChange={onFilterSearch('rating')}
+        />
+      </Grid>
+      <Grid item xs={2}>
+        <UiSelect
+          formProps={formProps}
+          name="sort"
+          label="Сортировка"
+          options={sortOptions}
+          onChange={(value) => {
+            onSortChange(value as ListSortType);
+          }}
+        />
+      </Grid>
+    </Grid>
+  );
+};

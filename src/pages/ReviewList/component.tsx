@@ -15,26 +15,18 @@ import {
   Typography,
 } from '@mui/material';
 import React, { FC } from 'react';
-import styled from 'styled-components';
 
 import { defaultSizeByPageTable } from 'src/config';
 import { ReviewsFilter } from 'src/components/Reviews/Filter';
 import { UiLoader } from 'src/components/UI/Loaders';
 import { UiStarsBlock } from 'src/components/UI/StarsBlock';
-import { ListSortType } from 'src/containers/Reviews/common';
+import { ListSortType } from 'src/models/Review/common';
 import { OnFilterSearchType } from 'src/pages/ReviewList/index';
 import { IReviewItemModel, IReviewModel } from 'src/models/Review/interfaces';
 import { CDate } from 'src/utils/CDate';
 import { Link, useNavigate } from 'react-router-dom';
 import { reviewFormPath } from 'src/routes/private';
 import { ReviewsListFilter } from 'src/store/reviews';
-
-const TableLoader = styled.div`
-  height: 50vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
 type Props = {
   model: IReviewModel;
@@ -79,7 +71,7 @@ export const ReviewsListComponent: FC<Props> = ({
         </Typography>
       </Box>
       <Box>
-        {/* <ReviewsFilter onFilterSearch={onFilterSearch} onSortChange={onSortChange} values={filter} /> */}
+        <ReviewsFilter onFilterSearch={onFilterSearch} onSortChange={onSortChange} />
 
         <Box display="flex" justifyContent="center" alignItems="center">
           {realUser && (
@@ -111,15 +103,22 @@ export const ReviewsListComponent: FC<Props> = ({
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={5}>
-                    <TableLoader>
+                    <Box
+                      sx={{
+                        height: '50vh',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
                       <UiLoader color="#3f51b5" />
-                    </TableLoader>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ) : (
                 <>
                   {model.data.map((item: IReviewItemModel) => (
-                    <TableRow key={item.id} hover onClick={onTrClick(item)}>
+                    <TableRow key={item.id} hover onClick={onTrClick(item)} sx={{ cursor: 'pointer' }}>
                       <TableCell>{item.group}</TableCell>
                       <TableCell>{item.album}</TableCell>
                       <TableCell>
@@ -141,6 +140,9 @@ export const ReviewsListComponent: FC<Props> = ({
                     count={model.amount}
                     rowsPerPage={filter.perPage}
                     labelRowsPerPage="На странице"
+                    labelDisplayedRows={({ from, to, count }) =>
+                      `${from}–${to} из ${count !== -1 ? count : `Более чем ${to}`}`
+                    }
                     page={filter.page - 1}
                     showFirstButton
                     showLastButton

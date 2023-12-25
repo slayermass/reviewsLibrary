@@ -16,18 +16,18 @@ export const ReviewsForm = (): React.ReactElement => {
 
   const user = useGlobalStore((state) => state.user.response as UserType);
 
-  const { item, getItem, clearItem } = useReviewsStore((state) => ({
+  const { item, getItem, clearItem, updateItem, clearList } = useReviewsStore((state) => ({
     item: state.item,
     getItem: state.getItem,
     clearItem: state.clearItem,
+    updateItem: state.updateItem,
+    clearList: state.clearList,
   }));
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (id) {
-      getItem(id);
-    }
+    getItem(id);
 
     return () => {
       clearItem();
@@ -76,13 +76,19 @@ export const ReviewsForm = (): React.ReactElement => {
         }
       })
         .then(() => {
+          if (id) {
+            updateItem(id, data);
+          } else {
+            clearList(); // load again
+          }
+
           toast.success('Успешно сохранено');
 
           navigate(reviewListPath);
         })
         .catch(toast.error);
     },
-    [checkIfDataExist, id, isAnonymousUser, item.response, navigate],
+    [checkIfDataExist, clearList, id, isAnonymousUser, item.response, navigate, updateItem],
   );
 
   return item.loading ? (

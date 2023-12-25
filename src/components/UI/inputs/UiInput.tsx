@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { FormControl, Input, InputLabel, TextFieldVariants } from '@mui/material';
 import React, { FC, useMemo } from 'react';
 
 import { getInputMaxLength } from 'src/components/UI/common/common';
@@ -9,12 +9,15 @@ type Props = {
   formProps: StateFormReturnType;
   name: string;
 
-  type?: 'email' | 'text' | 'password' | 'textarea';
+  type?: 'email' | 'text' | 'password' | 'textarea' | 'number';
   required?: boolean;
   label?: string;
   autoFocus?: boolean;
   maxLength?: number;
   errorLabel?: string;
+  variant?: TextFieldVariants;
+  endAdornment?: React.ReactNode;
+  onChange?: (value: string) => void;
 };
 
 export const UiInput: FC<Props> = ({
@@ -26,6 +29,9 @@ export const UiInput: FC<Props> = ({
   maxLength,
   type = 'text',
   errorLabel,
+  variant,
+  endAdornment,
+  onChange: onChangeProp,
 }) => {
   const localMaxLength = useMemo(() => getInputMaxLength(maxLength), [maxLength]);
 
@@ -48,21 +54,21 @@ export const UiInput: FC<Props> = ({
   });
   const hasErrors = !!errors?.length;
 
+  // <TextField expanded to custom
   return (
-    <TextField
-      margin="normal"
-      required
-      fullWidth
-      label={label}
-      name={name}
-      value={value}
-      error={hasErrors}
-      type={type}
-      onChange={(e) => {
-        onChange(name, e.target.value);
-      }}
-      helperText={hasErrors ? errorLabel : undefined}
-      autoFocus={autoFocus}
-    />
+    <FormControl variant={variant} required={required} error={hasErrors} margin="normal" fullWidth>
+      <InputLabel>{label}</InputLabel>
+      <Input
+        type={type}
+        onChange={(e) => {
+          onChange(name, e.target.value);
+
+          onChangeProp?.(e.target.value);
+        }}
+        value={value}
+        autoFocus={autoFocus}
+        endAdornment={endAdornment}
+      />
+    </FormControl>
   );
 };
