@@ -14,7 +14,8 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { defaultSizeByPageTable } from 'src/config';
 import { ReviewsFilter } from 'src/pages/ReviewList/Filter';
@@ -23,10 +24,12 @@ import { UiStarsBlock } from 'src/components/UI/StarsBlock';
 import { ListSortType } from 'src/models/Review/common';
 import { OnFilterSearchType } from 'src/pages/ReviewList/index';
 import { IReviewItemModel, IReviewModel } from 'src/models/Review/interfaces';
+import { API } from 'src/utils/apiDriver';
 import { CDate } from 'src/utils/CDate';
 import { Link, useNavigate } from 'react-router-dom';
 import { reviewFormPath } from 'src/routes/private';
 import { ReviewsListFilter } from 'src/store/reviews';
+import { downloadBlobAsFile } from 'src/utils/file';
 
 type Props = {
   model: IReviewModel;
@@ -52,6 +55,8 @@ export const ReviewsListComponent: FC<Props> = ({
   filter,
 }) => {
   const navigate = useNavigate();
+
+  const [isExportLoading, setIsExportLoading] = useState(false);
 
   const onTrClick = (itemModel: IReviewItemModel) => () => {
     if (realUser) {
@@ -153,6 +158,31 @@ export const ReviewsListComponent: FC<Props> = ({
                       onSizePageChange(+value);
                     }}
                   />
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{ mt: 2, mb: 2, px: 10 }}
+                    disabled={isExportLoading}
+                    onClick={() => {
+                      setIsExportLoading(true);
+
+                      API.exportJson()
+                        .then((response) => {
+                          downloadBlobAsFile(
+                            new Blob([JSON.stringify(response)], { type: 'application/json' }),
+                            'export.json',
+                          );
+                        })
+                        .catch(() => {
+                          toast.error(`Ошибка авторизации: пользователь не найден или не существует`);
+                        })
+                        .finally(() => {
+                          setIsExportLoading(false);
+                        });
+                    }}
+                  >
+                    Export
+                  </Button>
                 </TableCell>
               </TableRow>
             </TableFooter>

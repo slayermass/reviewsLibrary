@@ -35,6 +35,10 @@ export class DbMongo extends APIBaseInterface {
     return httpPut(`/review/${id}`, model);
   }
 
+  exportJson(): Promise<string> {
+    return httpGet(`/export`);
+  }
+
   getList(filter?: ReviewsListFilter): Promise<IReviewModel> {
     return httpGet<ReviewItemResponse>('/reviews', filter).then((response: SafeAnyType) => ({
       data: response.data.map((item: SafeAnyType) => new ReviewItemModel(item)),
